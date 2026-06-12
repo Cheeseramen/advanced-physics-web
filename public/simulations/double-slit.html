@@ -9,23 +9,15 @@
 </head>
 <body>
 <script>
-const W = 600, H = 440;
-const PAD = { l: 60, r: 16, t: 32, b: 95 };
-const PW = W - PAD.l - PAD.r;
-const PH = H - PAD.t - PAD.b;
+// --- 기본 설정 및 여백 ---
+let H = 440;
+let PAD = { l: 60, r: 20, t: 42, b: 150 };
+let gX, gY, gW, gH;
+let sX, sY, sW, sH;
 
-const gX = PAD.l;
-const gY = PAD.t;
-const gW = PW / 2;
-const gH = PH;
+let slider_d, slider_lam, slider_L;
 
-const sX = PAD.l + PW / 2 + 16;
-const sY = PAD.t;
-const sW = PW - gW - 16;
-const sH = PH;
-
-let slider_d, slider_lam;
-
+// --- 가시광선 파장(nm) -> RGB 변환 함수 ---
 function getLamRGB(lam) {
   let r = 0, g = 0, b = 0;
   if (lam >= 380 && lam < 440) {
@@ -41,9 +33,11 @@ function getLamRGB(lam) {
   } else if (lam >= 645 && lam <= 700) {
     r = 1;
   }
+
   let factor = 1;
   if (lam >= 380 && lam < 420) factor = 0.3 + 0.7 * (lam - 380) / (420 - 380);
   else if (lam >= 645 && lam <= 700) factor = 0.3 + 0.7 * (700 - lam) / (700 - 645);
+
   const gamma = 0.8;
   return {
     r: Math.pow(r * factor, gamma) * 255,
@@ -53,37 +47,81 @@ function getLamRGB(lam) {
 }
 
 function setup() {
-  createCanvas(W, H);
+  // 반응형 너비 적용
+  createCanvas(windowWidth, H);
+
+  // 슬라이더 1: 슬릿 간격 d (mm)
   slider_d = createSlider(0.1, 1.0, 0.3, 0.01);
-  slider_d.position(PAD.l, H - 55);
-  slider_d.style('width', PW + 'px');
+
+  // 슬라이더 2: 파장 λ (nm)
   slider_lam = createSlider(380, 700, 550, 5);
-  slider_lam.position(PAD.l, H - 25);
-  slider_lam.style('width', PW + 'px');
+
+  // 슬라이더 3: 스크린 거리 L (m)
+  slider_L = createSlider(0.5, 2.0, 1.0, 0.1);
+
+  calculateLayout();
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, H);
+  calculateLayout();
+}
+
+// 창 크기에 맞게 레이아웃 동적 계산 (반응형)
+function calculateLayout() {
+  let PW = width - PAD.l - PAD.r;
+  let gap = 30; // 좌우 패널 간격
+
+  gW = (PW - gap) / 2;
+  sW = gW;
+  gH = H - PAD.t - PAD.b;
+  sH = gH;
+
+  gX = PAD.l;
+  gY = PAD.t;
+  sX = gX + gW + gap;
+  sY = PAD.t;
+
+  // 슬라이더 너비 및 위치 반응형 정렬
+  let labelW = 100;
+  let sliderW = Math.min(PW - labelW, 600); // 슬라이더 최대 너비 제한
+
+  slider_d.position(PAD.l + labelW, H - 105);
+  slider_d.style('width', sliderW + 'px');
+
+  slider_lam.position(PAD.l + labelW, H - 70);
+  slider_lam.style('width', sliderW + 'px');
+
+  slider_L.position(PAD.l + labelW, H - 35);
+  slider_L.style('width', sliderW + 'px');
 }
 
 function draw() {
   const d = slider_d.value();
   const lam = slider_lam.value();
+  const L = slider_L.value();
   const c = getLamRGB(lam);
+
   background(255);
-  drawLeftGraph(d, lam, c);
-  drawRightScreen(d, lam, c);
+
+  drawLeftGraph(d, lam, L, c);
+  drawRightScreen(d, lam, L, c);
   drawAxes();
-  drawLabels(d, lam);
+  drawLabels(d, lam, L);
+  handleHover(d, lam, L);
 }
 
-function drawLeftGraph(d, lam, c) {
-  // 배경 색 띠
+// 1. 왼쪽 세기 분포 그래프
+function drawLeftGraph(d, lam, L, c) {
   noStroke();
   for (let i = 0; i <= gW; i++) {
     let py = map(i, 0, gW, -10, 10);
-    let I = Math.pow(Math.cos(1000 * Math.PI * d * py / lam), 2);
+    let I = Math.pow(Math.cos(1000 * Math.PI * d * py / (lam * L)), 2);
     fill(c.r, c.g, c.b, I * 50);
     rect(gX + i, gY, 1, gH);
   }
 
-  // 그리드
+  // 그리드 라인
   stroke(220); strokeWeight(0.5);
   for (let v = -10; v <= 10; v += 5) {
     let x = map(v, -10, 10, gX, gX + gW);
@@ -94,28 +132,29 @@ function drawLeftGraph(d, lam, c) {
     line(gX, y, gX + gW, y);
   }
 
-  // 세기 곡선
+  // 파란색 곡선
   noFill();
   stroke(30, 100, 220);
   strokeWeight(2);
   beginShape();
   for (let i = 0; i <= gW; i++) {
     let py = map(i, 0, gW, -10, 10);
-    let I = Math.pow(Math.cos(1000 * Math.PI * d * py / lam), 2);
+    let I = Math.pow(Math.cos(1000 * Math.PI * d * py / (lam * L)), 2);
     vertex(gX + i, gY + gH - I * gH);
   }
   endShape();
 
-  // 테두리 4면
+  // 테두리
   stroke(60); strokeWeight(1.5);
-  noFill();
-  rect(gX, gY, gW, gH);
+  line(gX, gY, gX, gY + gH);
+  line(gX, gY + gH, gX + gW, gY + gH);
 }
 
-function drawRightScreen(d, lam, c) {
+// 2. 오른쪽 스크린 시각화 영역
+function drawRightScreen(d, lam, L, c) {
   for (let i = 0; i <= sW; i++) {
     let py = map(i, 0, sW, -10, 10);
-    let I = Math.pow(Math.cos(1000 * Math.PI * d * py / lam), 2);
+    let I = Math.pow(Math.cos(1000 * Math.PI * d * py / (lam * L)), 2);
     stroke(c.r * I, c.g * I, c.b * I);
     line(sX + i, sY, sX + i, sY + sH);
   }
@@ -124,80 +163,146 @@ function drawRightScreen(d, lam, c) {
   stroke(60); strokeWeight(1.5);
   rect(sX, sY, sW, sH);
 
+  // 중앙(y=0) 밝은 무늬 표시기
   let cx = sX + sW / 2;
   fill(255, 255, 255, 200);
   noStroke();
   rect(cx - 45, sY - 26, 90, 18, 3);
+
   fill(0); textSize(11); textAlign(CENTER, CENTER);
-  text('중앙 밝은 무늬', cx, sY - 17);
+  text("중앙 밝은 무늬", cx, sY - 17);
+
   stroke(0); strokeWeight(1);
   line(cx, sY - 8, cx, sY - 1);
   fill(0); noStroke();
   triangle(cx - 2, sY - 4, cx + 2, sY - 4, cx, sY);
 }
 
+// 3. 축 레이블 그리기
 function drawAxes() {
   fill(60); noStroke();
 
-  // 왼쪽 X축 눈금
+  // 왼쪽 그래프 X축
   textSize(12); textAlign(CENTER);
   for (let v = -10; v <= 10; v += 5) {
     let x = map(v, -10, 10, gX, gX + gW);
     text(v, x, gY + gH + 16);
   }
   textSize(13);
-  text('스크린 위치 y (mm)', gX + gW / 2, gY + gH + 32);
+  text("스크린 위치 y (mm)", gX + gW / 2, gY + gH + 32);
 
-  // 왼쪽 Y축 눈금
-  textSize(11); textAlign(RIGHT, CENTER);
-  text('1.0', gX - 6, gY);
-  text('0.5', gX - 6, gY + gH / 2);
-  text('0',   gX - 6, gY + gH);
+  // 왼쪽 그래프 Y축
+  textSize(12); textAlign(RIGHT, CENTER);
+  text("1.0", gX - 8, gY);
+  text("0.5", gX - 8, gY + gH / 2);
+  text("0", gX - 8, gY + gH);
 
-  // 왼쪽 Y축 레이블 (캔버스 내 배치)
   push();
-  translate(14, gY + gH / 2);
+  translate(gX - 35, gY + gH / 2);
   rotate(-HALF_PI);
   textAlign(CENTER);
-  textSize(11);
-  text('세기 I', 0, 0);
+  textSize(13);
+  text("상대 세기 I", 0, 0);
   pop();
 
-  // 오른쪽 X축 눈금
-  textSize(12); textAlign(CENTER);
+  // 오른쪽 스크린 축
+  textSize(12); textAlign(CENTER, BOTTOM);
   for (let v of [-10, 0, 10]) {
     let x = map(v, -10, 10, sX, sX + sW);
     text(v, x, sY + sH + 16);
   }
   textSize(13);
-  text('스크린 위치 y (mm)', sX + sW / 2, sY + sH + 32);
+  text("스크린 위치 y (mm)", sX + sW / 2, sY + sH + 32);
 }
 
-function drawLabels(d, lam) {
-  let boxW = 190;
-  let boxH = 80;
+// 4. 정보 패널 및 슬라이더 텍스트
+function drawLabels(d, lam, L) {
+  // 우상단 정보 패널
+  let boxW = 200;
+  let boxH = 96;
   let rx = sX + sW - boxW - 8;
   let ry = sY + 8;
 
-  fill(255, 255, 255, 210);
-  noStroke();
+  // 화면이 좁을 경우 패널이 화면 밖으로 나가지 않도록 방지
+  if (rx < PAD.l) rx = PAD.l + 8;
+
+  fill(255, 255, 255, 220);
+  stroke(200); strokeWeight(1);
   rect(rx, ry, boxW, boxH, 4);
 
-  fill(40);
+  fill(40); noStroke();
   textSize(13);
   textAlign(LEFT);
-  text('슬릿 간격 d = ' + d.toFixed(2) + ' mm', rx + 10, ry + 22);
-  text('파장 λ = ' + lam + ' nm', rx + 10, ry + 44);
+  text(`슬릿 간격 d = ${d.toFixed(2)} mm`, rx + 14, ry + 22);
+  text(`빛의 파장 λ = ${lam} nm`, rx + 14, ry + 42);
+  text(`스크린 거리 L = ${L.toFixed(1)} m`, rx + 14, ry + 62);
 
-  let dy = (lam / d) / 1000;
-  fill(30, 100, 220);
-  text('무늬 간격 Δy = ' + dy.toFixed(2) + ' mm', rx + 10, ry + 66);
+  // 무늬 간격(Δy) 계산: λL / d
+  fill(30, 100, 220); // 파란색 강조
+  let dy = (lam * L / d) / 1000;
+  text(`무늬 간격 Δy = ${dy.toFixed(2)} mm`, rx + 14, ry + 82);
 
-  fill(100);
-  textSize(11);
-  textAlign(LEFT);
-  text('슬릿 간격 d 조절', PAD.l, H - 57);
-  text('파장 λ 조절', PAD.l, H - 27);
+  // 하단 슬라이더 레이블
+  fill(80);
+  textSize(12);
+  textAlign(LEFT, CENTER);
+  text("슬릿 간격 (d)", PAD.l, H - 95);
+  text("빛의 파장 (λ)", PAD.l, H - 60);
+  text("스크린 거리 (L)", PAD.l, H - 25);
+}
+
+// 5. 호버 툴팁 인터랙션
+function handleHover(d, lam, L) {
+  let isGraph = (mouseX >= gX && mouseX <= gX + gW && mouseY >= gY && mouseY <= gY + gH);
+  let isScreen = (mouseX >= sX && mouseX <= sX + sW && mouseY >= sY && mouseY <= sY + sH);
+
+  if (isGraph || isScreen) {
+    let areaX = isGraph ? gX : sX;
+    let areaW = isGraph ? gW : sW;
+
+    // 마우스 X 좌표를 스크린 y 위치(-10 ~ 10mm)로 변환
+    let py = map(mouseX, areaX, areaX + areaW, -10, 10);
+    // 해당 위치의 상대 세기(I) 계산
+    let I = Math.pow(Math.cos(1000 * Math.PI * d * py / (lam * L)), 2);
+
+    // 십자선 (세로 점선)
+    drawingContext.setLineDash([4, 4]);
+    stroke(120); strokeWeight(1.5);
+    if (isGraph) {
+      line(mouseX, gY, mouseX, gY + gH);
+    } else if (isScreen) {
+      line(mouseX, sY, mouseX, sY + sH);
+    }
+    drawingContext.setLineDash([]);
+
+    // 그래프 영역일 경우 파동 곡선 위에 마커 표시
+    if (isGraph) {
+      let pyGraph = map(I, 0, 1, gY + gH, gY);
+      fill(30, 100, 220);
+      noStroke();
+      ellipse(mouseX, pyGraph, 8, 8);
+    }
+
+    // 툴팁 박스 렌더링
+    let ttW = 140;
+    let ttH = 46;
+    let ttX = mouseX - ttW / 2;
+    let ttY = mouseY - ttH - 15;
+
+    // 화면 밖으로 벗어나지 않도록 보정
+    if (ttX < 10) ttX = 10;
+    if (ttX + ttW > width - 10) ttX = width - ttW - 10;
+    if (ttY < 10) ttY = mouseY + 15;
+
+    fill(255, 255, 255, 240);
+    stroke(200); strokeWeight(1);
+    rect(ttX, ttY, ttW, ttH, 4);
+
+    fill(40); noStroke();
+    textAlign(CENTER, CENTER);
+    textSize(11);
+    text(`위치 y = ${py.toFixed(2)} mm\n상대 세기 I = ${I.toFixed(2)}`, ttX + ttW / 2, ttY + ttH / 2);
+  }
 }
 </script>
 </body>

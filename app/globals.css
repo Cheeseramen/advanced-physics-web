@@ -1,6 +1,16 @@
 @import "tailwindcss";
 @import "katex/dist/katex.min.css";
 
+/* 슈뢰딩거 고양이 중첩 상태 애니메이션 */
+@keyframes superpose-a {
+  0%, 100% { opacity: 0.5; }
+  50%       { opacity: 0; }
+}
+@keyframes superpose-b {
+  0%, 100% { opacity: 0; }
+  50%       { opacity: 0.5; }
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;

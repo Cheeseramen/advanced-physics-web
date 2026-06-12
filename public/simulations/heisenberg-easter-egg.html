@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
+<style>
+  body { margin: 0; overflow: hidden; background: #fff; font-family: 'Noto Sans KR', sans-serif; }
+</style>
+</head>
+<body>
+<script>
+const W = 600, H = 440;
+
+// boinred: #791215 → rgb(121, 18, 21)
+const BOINRED = [121, 18, 21];
+
+let ex, ey, evx, evy;
+let isNetActive = false;
+let isWon = false;
+
+function setup() {
+  createCanvas(W, H);
+  noCursor();
+  ex = width / 2;
+  ey = height / 2;
+  evx = 0;
+  evy = 0;
+}
+
+function keyPressed() {
+  if (key === ' ') isNetActive = true;
+  if (keyCode === ESCAPE) window.parent.postMessage('close-heisenberg', '*');
+}
+function keyReleased() {
+  if (key === ' ') isNetActive = false;
+}
+
+function draw() {
+  // 승리 화면
+  if (isWon) {
+    background(248, 237, 237); // boxbg 계열
+    fill(...BOINRED);
+    textAlign(CENTER, CENTER);
+    textSize(22);
+    text("전자를 포획했습니다!", width / 2, height / 2 - 50);
+    fill(60);
+    textSize(13);
+    text("위치를 포기하고 파동(확률)으로 받아들인 순간", width / 2, height / 2 - 10);
+    text("잡을 수 있었습니다.", width / 2, height / 2 + 12);
+    fill(...BOINRED);
+    textSize(12);
+    text("Δx · Δp ≥ ℏ/2", width / 2, height / 2 + 48);
+    fill(150);
+    textSize(11);
+    text("[ ESC 또는 닫기 버튼으로 돌아가기 ]", width / 2, height / 2 + 80);
+    return;
+  }
+
+  // 게임 배경 (잔상 효과)
+  background(255, 252, 252, 220);
+
+  // 안내 텍스트
+  fill(80);
+  noStroke();
+  textAlign(CENTER);
+  textSize(12);
+  text("경고: 하이젠베르크의 불확정성 원리가 감지되었습니다.", width / 2, 24);
+  text("마우스(위치 측정)가 가까울수록 전자의 운동량이 요동칩니다.", width / 2, 42);
+  fill(...BOINRED);
+  text("Tip: [Spacebar] 로 슈뢰딩거의 파동 그물을 전개하세요!", width / 2, 62);
+
+  // 불확정성 계산
+  let d = dist(mouseX, mouseY, ex, ey);
+  let uncertainty = constrain(map(d, 0, 200, 25, 1), 1, 25);
+
+  evx += random(-uncertainty, uncertainty);
+  evy += random(-uncertainty, uncertainty);
+
+  if (d < 100 && !isNetActive) {
+    let angle = atan2(ey - mouseY, ex - mouseX);
+    evx += cos(angle) * (100 - d) * 0.2;
+    evy += sin(angle) * (100 - d) * 0.2;
+  }
+
+  evx *= 0.85;
+  evy *= 0.85;
+  ex += evx;
+  ey += evy;
+
+  if (ex < 10 || ex > width - 10)  { evx *= -1; ex = constrain(ex, 10, width - 10); }
+  if (ey < 10 || ey > height - 10) { evy *= -1; ey = constrain(ey, 10, height - 10); }
+
+  // 전자: 확률 구름 + 코어
+  fill(26, 90, 180, 50);
+  noStroke();
+  ellipse(ex, ey, uncertainty * 4 + 10, uncertainty * 4 + 10);
+  fill(26, 90, 180);
+  ellipse(ex, ey, 10, 10);
+  fill(255);
+  ellipse(ex, ey, 4, 4);
+
+  if (isNetActive) {
+    // 파동함수 그물 — boinred 계열
+    let netRadius = 140;
+    fill(...BOINRED, 40);
+    stroke(...BOINRED);
+    strokeWeight(2);
+    ellipse(mouseX, mouseY, netRadius, netRadius);
+    drawingContext.setLineDash([4, 4]);
+    ellipse(mouseX, mouseY, netRadius * 0.7, netRadius * 0.7);
+    drawingContext.setLineDash([]);
+    fill(...BOINRED); noStroke(); textSize(11);
+    text("|Ψ|² 파동함수 전개 중", mouseX, mouseY - 82);
+
+    if (d < netRadius / 2) {
+      isWon = true;
+      cursor();
+    }
+  } else {
+    // 십자선 커서
+    stroke(...BOINRED); strokeWeight(1.5);
+    line(mouseX - 10, mouseY, mouseX + 10, mouseY);
+    line(mouseX, mouseY - 10, mouseX, mouseY + 10);
+    noFill(); ellipse(mouseX, mouseY, 4, 4);
+    fill(...BOINRED); noStroke(); textSize(10);
+    text("Δx 최소화 시도...", mouseX + 15, mouseY + 15);
+  }
+}
+</script>
+</body>
+</html>
