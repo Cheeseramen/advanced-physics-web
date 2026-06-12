@@ -35,6 +35,10 @@ function keyReleased() {
   if (key === ' ') isNetActive = false;
 }
 
+function touchStarted() { isNetActive = true;  return false; }
+function touchEnded()   { isNetActive = false; return false; }
+function touchMoved()   { return false; }
+
 function draw() {
   // 승리 화면
   if (isWon) {
@@ -67,7 +71,11 @@ function draw() {
   text("경고: 하이젠베르크의 불확정성 원리가 감지되었습니다.", width / 2, 24);
   text("마우스(위치 측정)가 가까울수록 전자의 운동량이 요동칩니다.", width / 2, 42);
   fill(...BOINRED);
-  text("Tip: [Spacebar] 로 슈뢰딩거의 파동 그물을 전개하세요!", width / 2, 62);
+  let isTouchDevice = ('ontouchstart' in window);
+  text(isTouchDevice
+    ? "Tip: 화면을 터치하여 파동 그물을 전개하세요!"
+    : "Tip: [Spacebar] 로 슈뢰딩거의 파동 그물을 전개하세요!",
+    width / 2, 62);
 
   // 불확정성 계산
   let d = dist(mouseX, mouseY, ex, ey);
