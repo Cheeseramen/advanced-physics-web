@@ -2,14 +2,20 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
 <style>
-  body { margin: 0; overflow: hidden; background: #0b0c10; font-family: 'Noto Sans KR', sans-serif; }
+  body { margin: 0; overflow: hidden; background: #0b0c10; }
+  canvas { display: block; }
 </style>
 </head>
 <body>
 <script>
+// 기준 좌표계 (모든 게임 로직은 이 좌표에서 동작)
 const W = 600, H = 440;
+
+// 스케일 & 오프셋 (반응형 계산)
+let S = 1, OX = 0, OY = 0;
 
 let gameState = 'START';
 
@@ -24,18 +30,40 @@ let player = { n: 1, x: W/2, y: 380, targetY: 380, hp: 3, score: 0, maxScore: 10
 let photons = [], bullets = [], enemies = [], enemyBullets = [], floatingTexts = [];
 let frameCounter = 0;
 
+// 화면 좌표 → 게임 좌표 변환
+function gx(x) { return (x - OX) / S; }
+function gy(y) { return (y - OY) / S; }
+
+function calcScale() {
+  S = min(windowWidth / W, windowHeight / H);
+  OX = (windowWidth  - W * S) / 2;
+  OY = (windowHeight - H * S) / 2;
+}
+
 function setup() {
-  createCanvas(W, H);
+  createCanvas(windowWidth, windowHeight);
+  calcScale();
   textAlign(CENTER, CENTER);
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+  calcScale();
 }
 
 function draw() {
   background(10, 12, 22);
+  push();
+  translate(OX, OY);
+  scale(S);
+
   drawGrid();
-  if (gameState === 'START')    { drawStartScreen(); return; }
-  if (gameState === 'GAMEOVER') { drawGameOverScreen(); return; }
-  if (gameState === 'WIN')      { drawWinScreen(); return; }
-  drawGame();
+  if (gameState === 'START')    drawStartScreen();
+  else if (gameState === 'GAMEOVER') drawGameOverScreen();
+  else if (gameState === 'WIN') drawWinScreen();
+  else drawGame();
+
+  pop();
 }
 
 function drawGrid() {
@@ -85,7 +113,7 @@ function handlePlayerInput() {
   const speed = 7;
   if (keyIsDown(LEFT_ARROW) || keyIsDown(65)) player.x -= speed;
   if (keyIsDown(RIGHT_ARROW) || keyIsDown(68)) player.x += speed;
-  if (touches.length > 0) player.x = touches[0].x;
+  if (touches.length > 0) player.x = gx(touches[0].x);
   player.x = constrain(player.x, 60, W - 60);
 }
 
@@ -93,12 +121,9 @@ function updatePlayer() {
   player.y = lerp(player.y, player.targetY, 0.2);
   noStroke();
   let r = 35 + sin(frameCount * 0.15) * 8;
-  fill(0, 150, 255, 50);
-  ellipse(player.x, player.y, r, r);
-  fill(0, 180, 255, 100);
-  ellipse(player.x, player.y, 22, 22);
-  fill(255);
-  ellipse(player.x, player.y, 10, 10);
+  fill(0, 150, 255, 50);  ellipse(player.x, player.y, r, r);
+  fill(0, 180, 255, 100); ellipse(player.x, player.y, 22, 22);
+  fill(255);               ellipse(player.x, player.y, 10, 10);
 }
 
 function spawnEntities() {
@@ -107,22 +132,16 @@ function spawnEntities() {
 }
 
 function spawnPhoton() {
-  let requiredE = [];
-  let currentE = player.n * player.n;
-  for (let lvl of levels) {
-    if (lvl.n > player.n) requiredE.push(lvl.E - currentE);
-  }
-  let energyVal;
-  if (random(1) < 0.6 && requiredE.length > 0) energyVal = random(requiredE);
-  else energyVal = floor(random(1, 16));
-  photons.push({ x: random(80, W-80), y: -20, energy: energyVal, speed: random(2, 4.5), ghost: false });
+  let requiredE = [], currentE = player.n * player.n;
+  for (let lvl of levels) if (lvl.n > player.n) requiredE.push(lvl.E - currentE);
+  let e = (random(1) < 0.6 && requiredE.length > 0) ? random(requiredE) : floor(random(1, 16));
+  photons.push({ x: random(80, W-80), y: -20, energy: e, speed: random(2, 4.5), ghost: false });
 }
 
 function spawnEnemy() {
   let side = random(1) < 0.5 ? -30 : W + 30;
   let vx = side < 0 ? random(1.5, 3) : random(-3, -1.5);
-  let shields = [3, 5, 7, 8, 12, 15];
-  let sv = random(shields);
+  let sv = random([3, 5, 7, 8, 12, 15]);
   enemies.push({ x: side, y: random(40, 110), shield: sv, vx, r: 30, col: shieldColor(sv) });
 }
 
@@ -134,66 +153,53 @@ function shieldColor(s) {
 }
 
 function firePhoton() {
-  if (player.n <= 1) {
-    addFloat("방출 불가 (기저 상태 n=1)", player.x, player.y - 35, [255, 100, 100]);
-    return;
-  }
-  let nextLevel = levels.find(l => l.n === player.n - 1);
-  let dE = (player.n * player.n) - nextLevel.E;
-  player.n = nextLevel.n;
-  player.targetY = nextLevel.y;
-  let col = dE === 3 ? [0, 200, 255] : dE === 5 ? [50, 255, 100] : [255, 80, 80];
-  bullets.push({ x: player.x, y: player.y - 15, energy: dE, speed: -8, col });
-  addFloat(`-${dE} eV 방출!`, player.x, player.y - 35, col);
+  if (player.n <= 1) { addFloat("방출 불가 (기저 상태 n=1)", player.x, player.y-35, [255,100,100]); return; }
+  let next = levels.find(l => l.n === player.n - 1);
+  let dE = (player.n * player.n) - next.E;
+  player.n = next.n; player.targetY = next.y;
+  let col = dE===3 ? [0,200,255] : dE===5 ? [50,255,100] : [255,80,80];
+  bullets.push({ x: player.x, y: player.y-15, energy: dE, speed: -8, col });
+  addFloat(`-${dE} eV 방출!`, player.x, player.y-35, col);
 }
 
 function handlePhotons() {
-  for (let i = photons.length - 1; i >= 0; i--) {
+  for (let i = photons.length-1; i >= 0; i--) {
     let p = photons[i];
     p.y += p.speed;
     noStroke();
-    fill(p.ghost ? color(255, 50, 50, 40) : color(255, 230, 80, 220));
+    fill(p.ghost ? color(255,50,50,40) : color(255,230,80,220));
     ellipse(p.x, p.y, 26, 26);
-    fill(p.ghost ? color(255, 100, 100, 160) : color(20));
+    fill(p.ghost ? color(255,100,100,160) : color(20));
     textStyle(BOLD); textSize(11);
     text(`+${p.energy}`, p.x, p.y);
     textStyle(NORMAL);
 
     if (!p.ghost && dist(player.x, player.y, p.x, p.y) < 25) {
-      let nextE = (player.n * player.n) + p.energy;
-      let tgt = levels.find(l => l.E === nextE);
+      let tgt = levels.find(l => l.E === (player.n*player.n) + p.energy);
       if (tgt) {
         player.n = tgt.n; player.targetY = tgt.y;
-        addFloat("공명 흡수! 도약 완료", player.x, player.y - 35, [100, 255, 100]);
+        addFloat("공명 흡수! 도약 완료", player.x, player.y-35, [100,255,100]);
         photons.splice(i, 1);
-      } else {
-        p.ghost = true;
-        addFloat("투과됨 (에너지 불일치)", player.x, player.y - 35, [255, 100, 100]);
-      }
+      } else { p.ghost = true; addFloat("투과됨 (에너지 불일치)", player.x, player.y-35, [255,100,100]); }
     }
-    if (p.y > H + 20) photons.splice(i, 1);
+    if (p.y > H+20) photons.splice(i, 1);
   }
 }
 
 function handleBullets() {
-  for (let i = bullets.length - 1; i >= 0; i--) {
-    let b = bullets[i];
-    b.y += b.speed;
+  for (let i = bullets.length-1; i >= 0; i--) {
+    let b = bullets[i]; b.y += b.speed;
     stroke(b.col); strokeWeight(3);
-    line(b.x, b.y, b.x, b.y + 12);
-
-    for (let j = enemies.length - 1; j >= 0; j--) {
+    line(b.x, b.y, b.x, b.y+12);
+    for (let j = enemies.length-1; j >= 0; j--) {
       let e = enemies[j];
       if (dist(b.x, b.y, e.x, e.y) < e.r) {
         bullets.splice(i, 1);
         if (b.energy === e.shield) {
-          addFloat("공명 격추 성공!", e.x, e.y, [255, 230, 50]);
-          enemies.splice(j, 1);
-          player.score++;
+          addFloat("공명 격추 성공!", e.x, e.y, [255,230,50]);
+          enemies.splice(j, 1); player.score++;
           if (player.score >= player.maxScore) gameState = 'WIN';
-        } else {
-          addFloat("반사됨 (주파수 불일치)", e.x, e.y - 15, [255, 150, 150]);
-        }
+        } else { addFloat("반사됨 (주파수 불일치)", e.x, e.y-15, [255,150,150]); }
         break;
       }
     }
@@ -202,45 +208,35 @@ function handleBullets() {
 }
 
 function handleEnemies() {
-  for (let i = enemies.length - 1; i >= 0; i--) {
-    let e = enemies[i];
-    e.x += e.vx;
+  for (let i = enemies.length-1; i >= 0; i--) {
+    let e = enemies[i]; e.x += e.vx;
     fill(e.col[0], e.col[1], e.col[2], 50);
-    stroke(e.col[0], e.col[1], e.col[2]);
-    strokeWeight(2);
-    ellipse(e.x, e.y, e.r * 2, e.r * 2);
+    stroke(e.col[0], e.col[1], e.col[2]); strokeWeight(2);
+    ellipse(e.x, e.y, e.r*2, e.r*2);
     fill(255); noStroke(); textSize(11);
     text(`실드 ${e.shield}eV`, e.x, e.y);
-
-    if (frameCounter % 120 === 0 && random(1) < 0.4) {
-      enemyBullets.push({ x: e.x, y: e.y + 15, speed: 4 });
-    }
-    if ((e.vx > 0 && e.x > W+40) || (e.vx < 0 && e.x < -40)) enemies.splice(i, 1);
+    if (frameCounter % 120 === 0 && random(1) < 0.4)
+      enemyBullets.push({ x: e.x, y: e.y+15, speed: 4 });
+    if ((e.vx>0 && e.x>W+40) || (e.vx<0 && e.x<-40)) enemies.splice(i, 1);
   }
 }
 
 function handleEnemyBullets() {
-  for (let i = enemyBullets.length - 1; i >= 0; i--) {
-    let eb = enemyBullets[i];
-    eb.y += eb.speed;
-    fill(255, 80, 80); noStroke();
-    ellipse(eb.x, eb.y, 8, 8);
-
+  for (let i = enemyBullets.length-1; i >= 0; i--) {
+    let eb = enemyBullets[i]; eb.y += eb.speed;
+    fill(255,80,80); noStroke(); ellipse(eb.x, eb.y, 8, 8);
     if (dist(player.x, player.y, eb.x, eb.y) < 18) {
-      enemyBullets.splice(i, 1);
-      player.hp--;
-      addFloat("충돌! 에너지 붕괴 (−1 라이프)", player.x, player.y - 35, [255, 50, 50]);
+      enemyBullets.splice(i, 1); player.hp--;
+      addFloat("충돌! 에너지 붕괴 (−1 라이프)", player.x, player.y-35, [255,50,50]);
       if (player.hp <= 0) gameState = 'GAMEOVER';
     }
-    if (eb.y > H + 20) enemyBullets.splice(i, 1);
+    if (eb.y > H+20) enemyBullets.splice(i, 1);
   }
 }
 
-function addFloat(msg, x, y, col) {
-  floatingTexts.push({ msg, x, y, life: 60, col });
-}
+function addFloat(msg, x, y, col) { floatingTexts.push({ msg, x, y, life: 60, col }); }
 function drawFloatingTexts() {
-  for (let i = floatingTexts.length - 1; i >= 0; i--) {
+  for (let i = floatingTexts.length-1; i >= 0; i--) {
     let ft = floatingTexts[i];
     fill(ft.col[0], ft.col[1], ft.col[2], map(ft.life, 0, 60, 0, 255));
     noStroke(); textSize(13);
@@ -252,85 +248,75 @@ function drawFloatingTexts() {
 
 function drawUI() {
   noStroke();
-  fill(255, 230, 100); textSize(13); textAlign(LEFT, TOP);
+  fill(255,230,100); textSize(13); textAlign(LEFT, TOP);
   text(`격추: ${player.score} / ${player.maxScore}`, 20, 18);
-  fill(0, 180, 255);
+  fill(0,180,255);
   text(`n = ${player.n}  (E = ${player.n*player.n} eV)`, 20, 38);
-
-  let isTouchDevice = ('ontouchstart' in window);
-  fill(160, 160, 180); textSize(11); textAlign(LEFT, BOTTOM);
-  text(isTouchDevice
-    ? "터치: 이동  |  탭: 에너지 방출 사격"
-    : "←/→: 이동  |  Spacebar: 에너지 방출 사격", 20, H - 14);
-
+  fill(160,160,180); textSize(11); textAlign(LEFT, BOTTOM);
+  let touch = ('ontouchstart' in window);
+  text(touch ? "터치: 이동  |  탭: 에너지 방출 사격" : "←/→: 이동  |  Spacebar: 에너지 방출 사격", 20, H-14);
   textAlign(RIGHT, TOP);
-  let hearts = "♥ ".repeat(player.hp) + "♡ ".repeat(max(0, 3 - player.hp));
-  fill(255, 80, 80);
-  text(hearts.trim(), W - 20, 18);
+  fill(255,80,80);
+  text(("♥ ".repeat(player.hp) + "♡ ".repeat(max(0, 3-player.hp))).trim(), W-20, 18);
 }
 
-// --- 화면들 ---
 function drawStartScreen() {
-  fill(0, 180, 255); textSize(22); textAlign(CENTER, CENTER);
-  text("양자 슈터 (Quantum Shooter)", W/2, H/2 - 80);
-  stroke(0, 180, 255, 60); strokeWeight(1);
-  line(W/2 - 150, H/2 - 60, W/2 + 150, H/2 - 60);
-  noStroke();
+  fill(0,180,255); textSize(22); textAlign(CENTER, CENTER);
+  text("양자 슈터 (Quantum Shooter)", W/2, H/2-80);
+  stroke(0,180,255,60); strokeWeight(1);
+  line(W/2-150, H/2-60, W/2+150, H/2-60); noStroke();
   fill(200); textSize(13);
-  text("노란 광자를 흡수해 에너지 준위를 올리고,", W/2, H/2 - 33);
-  text("스페이스바로 궤도를 내리면서 전이 에너지를 방출하세요.", W/2, H/2 - 10);
-  fill(50, 255, 100);
-  text("방출 에너지와 적의 실드 eV가 정확히 공명해야 격추됩니다!", W/2, H/2 + 16);
-  fill(255, 230, 100); textSize(12);
-  text("10회 격추하면 승리", W/2, H/2 + 44);
-  fill(255, 255, 255, 180); textSize(14);
-  text("아무 키나 눌러서 시작", W/2, H/2 + 95);
-  if (keyIsPressed) gameState = 'PLAY';
+  text("노란 광자를 흡수해 에너지 준위를 올리고,", W/2, H/2-33);
+  text("스페이스바로 궤도를 내리면서 전이 에너지를 방출하세요.", W/2, H/2-10);
+  fill(50,255,100);
+  text("방출 에너지와 적의 실드 eV가 정확히 공명해야 격추됩니다!", W/2, H/2+16);
+  fill(255,230,100); textSize(12);
+  text("10회 격추하면 승리", W/2, H/2+44);
+  fill(255,255,255,180); textSize(14);
+  text("아무 키나 눌러서 시작", W/2, H/2+95);
 }
 
 function drawGameOverScreen() {
-  fill(255, 100, 100); textSize(26); textAlign(CENTER, CENTER);
-  text("에너지 장벽 붕괴", W/2, H/2 - 40);
+  fill(255,100,100); textSize(26); textAlign(CENTER, CENTER);
+  text("에너지 장벽 붕괴", W/2, H/2-40);
   fill(200); textSize(13);
-  text("전자의 보호막이 모두 소진되었습니다.", W/2, H/2 + 5);
-  fill(0, 180, 255); textSize(13);
-  text("아무 키나 눌러 재시작", W/2, H/2 + 60);
+  text("전자의 보호막이 모두 소진되었습니다.", W/2, H/2+5);
+  fill(0,180,255); textSize(13);
+  text("아무 키나 눌러 재시작", W/2, H/2+60);
 }
 
 function drawWinScreen() {
-  fill(100, 255, 100); textSize(26); textAlign(CENTER, CENTER);
-  text("양자 준위 지배 완료!", W/2, H/2 - 45);
+  fill(100,255,100); textSize(26); textAlign(CENTER, CENTER);
+  text("양자 준위 지배 완료!", W/2, H/2-45);
   fill(255); textSize(13);
-  text("전이 에너지를 정확히 계산해 공명 격추를 완성했습니다.", W/2, H/2 + 5);
-  text("양자 방출(Emission)의 선택성을 몸으로 체험했습니다!", W/2, H/2 + 28);
-  fill(255, 230, 100); textSize(13);
-  text("아무 키나 눌러 재도전", W/2, H/2 + 80);
+  text("전이 에너지를 정확히 계산해 공명 격추를 완성했습니다.", W/2, H/2+5);
+  text("양자 방출(Emission)의 선택성을 몸으로 체험했습니다!", W/2, H/2+28);
+  fill(255,230,100); textSize(13);
+  text("아무 키나 눌러 재도전", W/2, H/2+80);
 }
 
 function resetGame() {
-  player.n = 1; player.y = 380; player.targetY = 380;
-  player.x = W/2; player.hp = 3; player.score = 0;
-  photons = []; bullets = []; enemies = []; enemyBullets = [];
-  floatingTexts = []; frameCounter = 0;
-  gameState = 'PLAY';
+  player.n=1; player.y=380; player.targetY=380; player.x=W/2; player.hp=3; player.score=0;
+  photons=[]; bullets=[]; enemies=[]; enemyBullets=[]; floatingTexts=[]; frameCounter=0;
+  gameState='PLAY';
 }
 
 function keyPressed() {
-  if (keyCode === ESCAPE) { window.parent.postMessage('close-sim', '*'); return; }
-  if (gameState === 'PLAY' && key === ' ') { firePhoton(); return; }
-  if (gameState === 'GAMEOVER' || gameState === 'WIN') resetGame();
-  if (gameState === 'START') gameState = 'PLAY';
+  if (keyCode === ESCAPE) { window.parent.postMessage('close-sim','*'); return; }
+  if (gameState==='PLAY' && key===' ') { firePhoton(); return; }
+  if (gameState==='GAMEOVER' || gameState==='WIN') { resetGame(); return; }
+  if (gameState==='START') gameState='PLAY';
 }
 
 function mousePressed() {
-  if (gameState === 'GAMEOVER' || gameState === 'WIN') resetGame();
-  else if (gameState === 'START') gameState = 'PLAY';
+  if (gameState==='GAMEOVER' || gameState==='WIN') resetGame();
+  else if (gameState==='START') gameState='PLAY';
 }
 
 function touchStarted() {
-  if (gameState === 'START')                             { gameState = 'PLAY'; return false; }
-  if (gameState === 'GAMEOVER' || gameState === 'WIN')   { resetGame(); return false; }
-  if (gameState === 'PLAY') firePhoton();
+  if (gameState==='START')                           { gameState='PLAY'; return false; }
+  if (gameState==='GAMEOVER' || gameState==='WIN')   { resetGame(); return false; }
+  if (gameState==='PLAY') firePhoton();
   return false;
 }
 function touchMoved() { return false; }
