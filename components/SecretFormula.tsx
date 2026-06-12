@@ -14,7 +14,7 @@ export default function SecretFormula({ formula }: { formula: string }) {
   return (
     <span
       className="dm block overflow-x-auto text-center cursor-default select-none"
-      style={hinted ? { animation: 'hint-sparkle 3.5s ease-in-out infinite' } : undefined}
+      style={hinted ? { animation: 'hint-sparkle 2.5s ease-in-out infinite' } : undefined}
       dangerouslySetInnerHTML={{ __html: html }}
       onClick={() => window.dispatchEvent(new Event('open-quantum-jump'))}
     />

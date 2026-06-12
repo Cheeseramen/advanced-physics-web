@@ -9,10 +9,8 @@
 
 /* SecretFormula 힌트 반짝임 */
 @keyframes hint-sparkle {
-  0%, 75%, 100% { filter: none; opacity: 1; }
-  82%  { filter: drop-shadow(0 0 7px rgba(121,18,21,0.85)); opacity: 0.7; }
-  89%  { filter: drop-shadow(0 0 3px rgba(121,18,21,0.4)); opacity: 1; }
-  94%  { filter: drop-shadow(0 0 6px rgba(121,18,21,0.7)); opacity: 0.8; }
+  0%, 100% { filter: none; }
+  40%, 60% { filter: drop-shadow(0 0 8px rgba(121,18,21,0.9)); }
 }
 
 /* 슈뢰딩거 고양이 중첩 상태 애니메이션 */
