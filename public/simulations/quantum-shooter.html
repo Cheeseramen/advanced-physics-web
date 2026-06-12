@@ -4,13 +4,12 @@
 <meta charset="utf-8">
 <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
 <style>
-  body { margin: 0; overflow: hidden; background: #fff; font-family: 'Noto Sans KR', sans-serif; }
+  body { margin: 0; overflow: hidden; background: #0b0c10; font-family: 'Noto Sans KR', sans-serif; }
 </style>
 </head>
 <body>
 <script>
 const W = 600, H = 440;
-const BR = [121, 18, 21]; // boinred
 
 let gameState = 'START';
 
@@ -22,7 +21,6 @@ const levels = [
 ];
 
 let player = { n: 1, x: W/2, y: 380, targetY: 380, hp: 3, score: 0, maxScore: 10 };
-
 let photons = [], bullets = [], enemies = [], enemyBullets = [], floatingTexts = [];
 let frameCounter = 0;
 
@@ -32,15 +30,22 @@ function setup() {
 }
 
 function draw() {
+  background(10, 12, 22);
+  drawGrid();
   if (gameState === 'START')    { drawStartScreen(); return; }
   if (gameState === 'GAMEOVER') { drawGameOverScreen(); return; }
   if (gameState === 'WIN')      { drawWinScreen(); return; }
   drawGame();
 }
 
+function drawGrid() {
+  stroke(30, 40, 70, 80);
+  strokeWeight(0.5);
+  for (let x = 0; x < W; x += 30) line(x, 0, x, H);
+  for (let y = 0; y < H; y += 30) line(0, y, W, y);
+}
+
 function drawGame() {
-  background(255, 252, 252, 220);
-  drawGrid();
   frameCounter++;
   drawEnergyLevels();
   handlePlayerInput();
@@ -54,26 +59,19 @@ function drawGame() {
   drawUI();
 }
 
-function drawGrid() {
-  stroke(220, 215, 215, 150);
-  strokeWeight(0.5);
-  for (let x = 0; x < W; x += 30) line(x, 0, x, H);
-  for (let y = 0; y < H; y += 30) line(0, y, W, y);
-}
-
 function drawEnergyLevels() {
   strokeWeight(1.5);
   for (let lvl of levels) {
     if (lvl.n === player.n) {
-      stroke(...BR, 200);
+      stroke(0, 180, 255, 180);
       drawingContext.setLineDash([]);
     } else {
-      stroke(180, 180, 185, 130);
+      stroke(100, 100, 150, 60);
       drawingContext.setLineDash([8, 6]);
     }
     line(50, lvl.y, W - 50, lvl.y);
     noStroke();
-    fill(lvl.n === player.n ? color(...BR) : color(130));
+    fill(160, 180, 240, 200);
     textSize(11);
     textAlign(LEFT, CENTER);
     text(`n = ${lvl.n}`, 15, lvl.y);
@@ -95,12 +93,12 @@ function updatePlayer() {
   player.y = lerp(player.y, player.targetY, 0.2);
   noStroke();
   let r = 35 + sin(frameCount * 0.15) * 8;
-  fill(26, 90, 180, 45);
+  fill(0, 150, 255, 50);
   ellipse(player.x, player.y, r, r);
-  fill(26, 90, 180, 110);
+  fill(0, 180, 255, 100);
   ellipse(player.x, player.y, 22, 22);
   fill(255);
-  ellipse(player.x, player.y, 8, 8);
+  ellipse(player.x, player.y, 10, 10);
 }
 
 function spawnEntities() {
@@ -115,11 +113,8 @@ function spawnPhoton() {
     if (lvl.n > player.n) requiredE.push(lvl.E - currentE);
   }
   let energyVal;
-  if (random(1) < 0.6 && requiredE.length > 0) {
-    energyVal = random(requiredE);
-  } else {
-    energyVal = floor(random(1, 16));
-  }
+  if (random(1) < 0.6 && requiredE.length > 0) energyVal = random(requiredE);
+  else energyVal = floor(random(1, 16));
   photons.push({ x: random(80, W-80), y: -20, energy: energyVal, speed: random(2, 4.5), ghost: false });
 }
 
@@ -128,26 +123,26 @@ function spawnEnemy() {
   let vx = side < 0 ? random(1.5, 3) : random(-3, -1.5);
   let shields = [3, 5, 7, 8, 12, 15];
   let sv = random(shields);
-  enemies.push({ x: side, y: random(40, 110), shield: sv, vx: vx, r: 30, col: shieldColor(sv) });
+  enemies.push({ x: side, y: random(40, 110), shield: sv, vx, r: 30, col: shieldColor(sv) });
 }
 
 function shieldColor(s) {
-  if (s === 3) return [0, 110, 190];
-  if (s === 5) return [20, 140, 70];
-  if (s === 7) return [200, 50, 50];
-  return [130, 50, 180];
+  if (s === 3) return [0, 200, 255];
+  if (s === 5) return [50, 255, 100];
+  if (s === 7) return [255, 80, 80];
+  return [200, 100, 255];
 }
 
 function firePhoton() {
   if (player.n <= 1) {
-    addFloat("방출 불가 (기저 상태 n=1)", player.x, player.y - 35, [180, 60, 60]);
+    addFloat("방출 불가 (기저 상태 n=1)", player.x, player.y - 35, [255, 100, 100]);
     return;
   }
   let nextLevel = levels.find(l => l.n === player.n - 1);
   let dE = (player.n * player.n) - nextLevel.E;
   player.n = nextLevel.n;
   player.targetY = nextLevel.y;
-  let col = dE === 3 ? [0, 110, 190] : dE === 5 ? [20, 140, 70] : [200, 50, 50];
+  let col = dE === 3 ? [0, 200, 255] : dE === 5 ? [50, 255, 100] : [255, 80, 80];
   bullets.push({ x: player.x, y: player.y - 15, energy: dE, speed: -8, col });
   addFloat(`-${dE} eV 방출!`, player.x, player.y - 35, col);
 }
@@ -157,11 +152,10 @@ function handlePhotons() {
     let p = photons[i];
     p.y += p.speed;
     noStroke();
-    fill(p.ghost ? color(200, 100, 100, 50) : color(210, 130, 20, 230));
+    fill(p.ghost ? color(255, 50, 50, 40) : color(255, 230, 80, 220));
     ellipse(p.x, p.y, 26, 26);
-    fill(p.ghost ? color(160, 60, 60, 160) : color(40));
-    textStyle(BOLD);
-    textSize(11);
+    fill(p.ghost ? color(255, 100, 100, 160) : color(20));
+    textStyle(BOLD); textSize(11);
     text(`+${p.energy}`, p.x, p.y);
     textStyle(NORMAL);
 
@@ -170,11 +164,11 @@ function handlePhotons() {
       let tgt = levels.find(l => l.E === nextE);
       if (tgt) {
         player.n = tgt.n; player.targetY = tgt.y;
-        addFloat("공명 흡수! 도약 완료", player.x, player.y - 35, [...BR]);
+        addFloat("공명 흡수! 도약 완료", player.x, player.y - 35, [100, 255, 100]);
         photons.splice(i, 1);
       } else {
         p.ghost = true;
-        addFloat("투과됨 (에너지 불일치)", player.x, player.y - 35, [180, 80, 80]);
+        addFloat("투과됨 (에너지 불일치)", player.x, player.y - 35, [255, 100, 100]);
       }
     }
     if (p.y > H + 20) photons.splice(i, 1);
@@ -193,12 +187,12 @@ function handleBullets() {
       if (dist(b.x, b.y, e.x, e.y) < e.r) {
         bullets.splice(i, 1);
         if (b.energy === e.shield) {
-          addFloat("공명 격추 성공!", e.x, e.y, [...BR]);
+          addFloat("공명 격추 성공!", e.x, e.y, [255, 230, 50]);
           enemies.splice(j, 1);
           player.score++;
           if (player.score >= player.maxScore) gameState = 'WIN';
         } else {
-          addFloat("반사됨 (주파수 불일치)", e.x, e.y - 15, [160, 100, 100]);
+          addFloat("반사됨 (주파수 불일치)", e.x, e.y - 15, [255, 150, 150]);
         }
         break;
       }
@@ -211,13 +205,11 @@ function handleEnemies() {
   for (let i = enemies.length - 1; i >= 0; i--) {
     let e = enemies[i];
     e.x += e.vx;
-    noStroke();
-    fill(e.col[0], e.col[1], e.col[2], 35);
+    fill(e.col[0], e.col[1], e.col[2], 50);
     stroke(e.col[0], e.col[1], e.col[2]);
     strokeWeight(2);
     ellipse(e.x, e.y, e.r * 2, e.r * 2);
-    fill(40); noStroke();
-    textSize(11);
+    fill(255); noStroke(); textSize(11);
     text(`실드 ${e.shield}eV`, e.x, e.y);
 
     if (frameCounter % 120 === 0 && random(1) < 0.4) {
@@ -231,13 +223,13 @@ function handleEnemyBullets() {
   for (let i = enemyBullets.length - 1; i >= 0; i--) {
     let eb = enemyBullets[i];
     eb.y += eb.speed;
-    fill(...BR, 200); noStroke();
-    ellipse(eb.x, eb.y, 10, 10);
+    fill(255, 80, 80); noStroke();
+    ellipse(eb.x, eb.y, 8, 8);
 
     if (dist(player.x, player.y, eb.x, eb.y) < 18) {
       enemyBullets.splice(i, 1);
       player.hp--;
-      addFloat("충돌! 에너지 붕괴 (−1 라이프)", player.x, player.y - 35, [...BR]);
+      addFloat("충돌! 에너지 붕괴 (−1 라이프)", player.x, player.y - 35, [255, 50, 50]);
       if (player.hp <= 0) gameState = 'GAMEOVER';
     }
     if (eb.y > H + 20) enemyBullets.splice(i, 1);
@@ -260,74 +252,59 @@ function drawFloatingTexts() {
 
 function drawUI() {
   noStroke();
-  fill(...BR); textSize(13); textAlign(LEFT, TOP);
+  fill(255, 230, 100); textSize(13); textAlign(LEFT, TOP);
   text(`격추: ${player.score} / ${player.maxScore}`, 20, 18);
-  fill(26, 90, 180);
+  fill(0, 180, 255);
   text(`n = ${player.n}  (E = ${player.n*player.n} eV)`, 20, 38);
 
   let isTouchDevice = ('ontouchstart' in window);
-  fill(120); textSize(11); textAlign(LEFT, BOTTOM);
+  fill(160, 160, 180); textSize(11); textAlign(LEFT, BOTTOM);
   text(isTouchDevice
     ? "터치: 이동  |  탭: 에너지 방출 사격"
     : "←/→: 이동  |  Spacebar: 에너지 방출 사격", 20, H - 14);
 
   textAlign(RIGHT, TOP);
   let hearts = "♥ ".repeat(player.hp) + "♡ ".repeat(max(0, 3 - player.hp));
-  fill(...BR);
+  fill(255, 80, 80);
   text(hearts.trim(), W - 20, 18);
 }
 
 // --- 화면들 ---
 function drawStartScreen() {
-  background(255);
-  fill(...BR); textSize(20); textAlign(CENTER, CENTER);
-  text("양자 슈터 (Quantum Shooter)", W/2, H/2 - 85);
-  stroke(...BR, 60); strokeWeight(1);
-  line(W/2 - 150, H/2 - 65, W/2 + 150, H/2 - 65);
+  fill(0, 180, 255); textSize(22); textAlign(CENTER, CENTER);
+  text("양자 슈터 (Quantum Shooter)", W/2, H/2 - 80);
+  stroke(0, 180, 255, 60); strokeWeight(1);
+  line(W/2 - 150, H/2 - 60, W/2 + 150, H/2 - 60);
   noStroke();
-  fill(60); textSize(13);
-  text("노란 광자를 흡수해 에너지 준위를 올리고,", W/2, H/2 - 38);
-  text("스페이스바로 궤도를 내리면서 전이 에너지를 방출하세요.", W/2, H/2 - 15);
-  fill(...BR);
-  text("적의 실드 eV와 방출 에너지가 정확히 일치해야 격추됩니다!", W/2, H/2 + 12);
-  fill(100); textSize(12);
-  text(`10회 격추하면 승리`, W/2, H/2 + 42);
-
-  fill(...BR, 15); stroke(...BR, 60); strokeWeight(1);
-  rect(W/2 - 90, H/2 + 75, 180, 34, 6);
-  noStroke(); fill(...BR); textSize(13);
-  text("아무 키나 눌러서 시작", W/2, H/2 + 92);
-
+  fill(200); textSize(13);
+  text("노란 광자를 흡수해 에너지 준위를 올리고,", W/2, H/2 - 33);
+  text("스페이스바로 궤도를 내리면서 전이 에너지를 방출하세요.", W/2, H/2 - 10);
+  fill(50, 255, 100);
+  text("방출 에너지와 적의 실드 eV가 정확히 공명해야 격추됩니다!", W/2, H/2 + 16);
+  fill(255, 230, 100); textSize(12);
+  text("10회 격추하면 승리", W/2, H/2 + 44);
+  fill(255, 255, 255, 180); textSize(14);
+  text("아무 키나 눌러서 시작", W/2, H/2 + 95);
   if (keyIsPressed) gameState = 'PLAY';
 }
 
 function drawGameOverScreen() {
-  background(255);
-  fill(...BR); textSize(24); textAlign(CENTER, CENTER);
-  text("에너지 장벽 붕괴", W/2, H/2 - 50);
-  stroke(...BR, 60); strokeWeight(1);
-  line(W/2 - 100, H/2 - 30, W/2 + 100, H/2 - 30);
-  noStroke();
-  fill(80); textSize(13);
+  fill(255, 100, 100); textSize(26); textAlign(CENTER, CENTER);
+  text("에너지 장벽 붕괴", W/2, H/2 - 40);
+  fill(200); textSize(13);
   text("전자의 보호막이 모두 소진되었습니다.", W/2, H/2 + 5);
-  fill(140); textSize(12);
-  text("화면을 클릭하거나 키를 눌러 재시작", W/2, H/2 + 60);
-  if (keyIsPressed) resetGame();
+  fill(0, 180, 255); textSize(13);
+  text("아무 키나 눌러 재시작", W/2, H/2 + 60);
 }
 
 function drawWinScreen() {
-  background(252, 237, 237);
-  fill(...BR); textSize(26); textAlign(CENTER, CENTER);
-  text("양자 준위 지배 완료!", W/2, H/2 - 55);
-  stroke(...BR, 80); strokeWeight(1);
-  line(W/2 - 110, H/2 - 35, W/2 + 110, H/2 - 35);
-  noStroke();
-  fill(60); textSize(13);
-  text("전이 에너지를 정확히 계산해 공명 격추를 완성했습니다.", W/2, H/2);
-  text("양자 방출(Emission)의 선택성을 몸으로 체험했습니다!", W/2, H/2 + 24);
-  fill(140); textSize(12);
-  text("화면을 클릭하거나 키를 눌러 재도전", W/2, H/2 + 70);
-  if (keyIsPressed) resetGame();
+  fill(100, 255, 100); textSize(26); textAlign(CENTER, CENTER);
+  text("양자 준위 지배 완료!", W/2, H/2 - 45);
+  fill(255); textSize(13);
+  text("전이 에너지를 정확히 계산해 공명 격추를 완성했습니다.", W/2, H/2 + 5);
+  text("양자 방출(Emission)의 선택성을 몸으로 체험했습니다!", W/2, H/2 + 28);
+  fill(255, 230, 100); textSize(13);
+  text("아무 키나 눌러 재도전", W/2, H/2 + 80);
 }
 
 function resetGame() {
@@ -339,9 +316,10 @@ function resetGame() {
 }
 
 function keyPressed() {
-  if (keyCode === ESCAPE) window.parent.postMessage('close-sim', '*');
-  if (gameState === 'PLAY' && key === ' ') firePhoton();
-  if ((gameState === 'GAMEOVER' || gameState === 'WIN') && keyCode !== ESCAPE) resetGame();
+  if (keyCode === ESCAPE) { window.parent.postMessage('close-sim', '*'); return; }
+  if (gameState === 'PLAY' && key === ' ') { firePhoton(); return; }
+  if (gameState === 'GAMEOVER' || gameState === 'WIN') resetGame();
+  if (gameState === 'START') gameState = 'PLAY';
 }
 
 function mousePressed() {
@@ -350,8 +328,8 @@ function mousePressed() {
 }
 
 function touchStarted() {
-  if (gameState === 'START')               { gameState = 'PLAY'; return false; }
-  if (gameState === 'GAMEOVER' || gameState === 'WIN') { resetGame(); return false; }
+  if (gameState === 'START')                             { gameState = 'PLAY'; return false; }
+  if (gameState === 'GAMEOVER' || gameState === 'WIN')   { resetGame(); return false; }
   if (gameState === 'PLAY') firePhoton();
   return false;
 }
