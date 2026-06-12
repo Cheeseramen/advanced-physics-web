@@ -18,7 +18,6 @@ import PageNav from '@/components/PageNav'
 import SimKeyword from '@/components/SimKeyword'
 import PhetButton from '@/components/PhetButton'
 import SecretCat from '@/components/SecretCat'
-import SecretFormula from '@/components/SecretFormula'
 import QuantumShooterEmbed from '@/components/QuantumShooterEmbed'
 import { getAdjacentChapters } from '@/lib/chapters'
 
@@ -37,7 +36,7 @@ function SubSectionTitle({ children }: { children: React.ReactNode }) {
   )
 }
 
-const components = { h1: SectionTitle, h2: SubSectionTitle, LawBox, ExBox, SummaryBox, Solution, Result, DisplayMath, SummaryCard, SummaryGrid, SimKeyword, QuizMatch, PhetButton, SecretCat, SecretFormula, QuantumShooterEmbed }
+const components = { h1: SectionTitle, h2: SubSectionTitle, LawBox, ExBox, SummaryBox, Solution, Result, DisplayMath, SummaryCard, SummaryGrid, SimKeyword, QuizMatch, PhetButton, SecretCat, QuantumShooterEmbed }
 
 interface Props {
   params: Promise<{ chapter: string }>

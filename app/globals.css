@@ -7,12 +7,6 @@
   40%, 60%  { color: #791215; }
 }
 
-/* SecretFormula 힌트 반짝임 */
-@keyframes hint-sparkle {
-  0%, 100% { filter: none; }
-  40%, 60% { filter: drop-shadow(0 0 8px rgba(121,18,21,0.9)); }
-}
-
 /* 슈뢰딩거 고양이 중첩 상태 애니메이션 */
 @keyframes superpose-a {
   0%, 100% { opacity: 0.5; }

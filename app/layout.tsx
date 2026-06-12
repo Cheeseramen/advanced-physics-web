@@ -4,7 +4,6 @@ import Link from 'next/link'
 import ChatWidget from '@/components/ChatWidget'
 import EasterEgg from '@/components/EasterEgg'
 import HeisenbergEasterEgg from '@/components/HeisenbergEasterEgg'
-import QuantumJumpEasterEgg from '@/components/QuantumJumpEasterEgg'
 import './globals.css'
 
 const notoSansKR = Noto_Sans_KR({
@@ -37,7 +36,6 @@ export default function RootLayout({
         <ChatWidget />
         <EasterEgg />
         <HeisenbergEasterEgg />
-        <QuantumJumpEasterEgg />
       </body>
     </html>
   )
