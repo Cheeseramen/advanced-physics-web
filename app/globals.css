@@ -42,13 +42,6 @@ body {
   text-align: initial !important;
 }
 
-/* JSX 안에서 inline으로 처리된 display math 단락 중앙 정렬 */
-p:has(> .katex:only-child) {
-  text-align: center;
-  margin: 0.75rem 0;
-}
-
-
 /* 표 스타일 */
 table {
   width: 100%;

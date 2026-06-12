@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
+<style>
+  body { margin: 0; overflow: hidden; background: #fff; font-family: 'Noto Sans KR', sans-serif; }
+</style>
+</head>
+<body>
+<script>
+const W = 600, H = 440;
+const PAD = { l: 52, r: 16, t: 32, b: 92 };
+const PW = W - PAD.l - PAD.r;
+const PH = H - PAD.t - PAD.b;
+
+const h = 6.626e-34;
+const e = 1.602e-19;
+
+const F_MIN = 3;
+const F_MAX = 15;
+const V_MIN = 0;
+const V_MAX = 4;
+const F_LIGHT = 8.0;
+
+let slider;
+
+function calcF0(phi_eV) {
+  return (phi_eV * e) / h / 1e14;
+}
+
+function calcV(f_14, phi_eV) {
+  return (h * (f_14 * 1e14) - (phi_eV * e)) / e;
+}
+
+function fToX(f) {
+  return PAD.l + ((f - F_MIN) / (F_MAX - F_MIN)) * PW;
+}
+
+function vToY(v) {
+  return PAD.t + PH - ((v - V_MIN) / (V_MAX - V_MIN)) * PH;
+}
+
+function setup() {
+  createCanvas(W, H);
+
+  slider = createSlider(1.5, 5.5, 2.3, 0.1);
+  slider.position(PAD.l, H - 57);
+  slider.style('width', PW + 'px');
+
+  // 금속 프리셋 버튼 (슬라이더 아래)
+  const metals = [
+    { label: 'Na  (2.3 eV)', phi: 2.3 },
+    { label: 'Al  (4.1 eV)', phi: 4.1 },
+    { label: 'Cu  (4.7 eV)', phi: 4.7 },
+  ];
+  const gap = 8;
+  const bw = floor((PW - gap * 2) / 3);
+  metals.forEach((m, i) => {
+    let btn = createButton(m.label);
+    btn.position(PAD.l + i * (bw + gap), H - 26);
+    btn.size(bw, 20);
+    btn.style('font-size', '11px');
+    btn.style('font-family', 'Noto Sans KR, sans-serif');
+    btn.style('cursor', 'pointer');
+    btn.style('border', '1px solid #bbb');
+    btn.style('border-radius', '3px');
+    btn.style('background', '#f5f5f5');
+    btn.style('padding', '0');
+    btn.mousePressed(() => slider.value(m.phi));
+  });
+}
+
+function draw() {
+  const phi_eV = slider.value();
+  const f0 = calcF0(phi_eV);
+
+  background(255);
+
+  drawNoEmissionZone(f0);
+  drawGrid();
+  drawThresholdLine(f0);
+  drawPhotoelectricCurve(phi_eV, f0);
+  drawFixedLightPoint(phi_eV, f0);
+  drawAxes();
+  drawLabels(phi_eV, f0);
+}
+
+function drawNoEmissionZone(f0) {
+  let x_start = fToX(F_MIN);
+  let x_end = fToX(Math.min(f0, F_MAX));
+  if (x_end > x_start) {
+    noStroke();
+    fill(240);
+    rect(x_start, PAD.t, x_end - x_start, PH);
+    let w = x_end - x_start;
+    if (w > 30) {
+      fill(140);
+      textSize(12);
+      textAlign(CENTER, CENTER);
+      text('전자 미방출', x_start + w / 2, PAD.t + PH / 2);
+    }
+  }
+}
+
+function drawGrid() {
+  stroke(230);
+  strokeWeight(0.5);
+  for (let f = F_MIN; f <= F_MAX; f += 2) {
+    line(fToX(f), PAD.t, fToX(f), PAD.t + PH);
+  }
+  for (let v = V_MIN; v <= V_MAX; v += 1) {
+    line(PAD.l, vToY(v), PAD.l + PW, vToY(v));
+  }
+}
+
+function drawThresholdLine(f0) {
+  if (f0 >= F_MIN && f0 <= F_MAX) {
+    let x = fToX(f0);
+    drawingContext.setLineDash([4, 3]);
+    stroke(50, 160, 80);
+    strokeWeight(1.5);
+    line(x, PAD.t, x, PAD.t + PH);
+    drawingContext.setLineDash([]);
+  }
+}
+
+function drawPhotoelectricCurve(phi_eV, f0) {
+  if (f0 > F_MAX) return;
+
+  let start_f = Math.max(F_MIN, f0);
+  let end_f = F_MAX;
+  let max_v = calcV(end_f, phi_eV);
+
+  if (max_v > V_MAX) {
+    max_v = V_MAX;
+    end_f = ((V_MAX + phi_eV) * e) / (h * 1e14);
+  }
+
+  stroke(50, 100, 200);
+  strokeWeight(2.5);
+  line(fToX(start_f), vToY(calcV(start_f, phi_eV)), fToX(end_f), vToY(max_v));
+
+  if (f0 >= F_MIN && f0 <= F_MAX) {
+    noStroke();
+    fill(220, 50, 50);
+    ellipse(fToX(f0), vToY(0), 8, 8);
+  }
+}
+
+function drawFixedLightPoint(phi_eV, f0) {
+  let v = calcV(F_LIGHT, phi_eV);
+  let isEmitting = F_LIGHT >= f0;
+  let display_v = isEmitting ? v : 0;
+
+  let x = fToX(F_LIGHT);
+  let y = vToY(display_v);
+
+  fill(255, 140, 0);
+  stroke(200, 100, 0);
+  strokeWeight(1.5);
+  ellipse(x, y, 9, 9);
+
+  noStroke();
+  fill(200, 100, 0);
+  textSize(10);
+  textAlign(CENTER);
+  text('입사광', x, y - 10);
+}
+
+function drawAxes() {
+  stroke(60);
+  strokeWeight(1.5);
+  line(PAD.l, PAD.t, PAD.l, PAD.t + PH);
+  line(PAD.l, PAD.t + PH, PAD.l + PW, PAD.t + PH);
+
+  fill(60);
+  noStroke();
+  textSize(10);
+  textAlign(CENTER);
+  for (let f = F_MIN; f <= F_MAX; f += 2) {
+    text(f, fToX(f), PAD.t + PH + 14);
+  }
+  textSize(11);
+  text('진동수 f (×10¹⁴ Hz)', PAD.l + PW / 2, PAD.t + PH + 27);
+
+  textAlign(RIGHT, CENTER);
+  textSize(10);
+  for (let v = V_MIN; v <= V_MAX; v += 1) {
+    text(v, PAD.l - 6, vToY(v));
+  }
+
+  push();
+  translate(14, PAD.t + PH / 2);
+  rotate(-HALF_PI);
+  textAlign(CENTER);
+  textSize(10);
+  text('정지전압 V₀ (V)', 0, 0);
+  pop();
+}
+
+function drawLabels(phi_eV, f0) {
+  let v_light = calcV(F_LIGHT, phi_eV);
+  let isEmitting = F_LIGHT >= f0;
+  let v_str = isEmitting ? v_light.toFixed(2) : '0.00';
+
+  // 정보 박스 (텍스트 3줄)
+  noStroke();
+  fill(255, 255, 255, 210);
+  rect(PAD.l + PW - 220, PAD.t + 4, 220, 62, 4);
+
+  fill(40);
+  textSize(12);
+  textAlign(RIGHT);
+
+  let rx = PAD.l + PW - 12;
+  let ty = PAD.t + 16;
+  let lh = 18;
+
+  text('일함수 φ = ' + phi_eV.toFixed(1) + ' eV', rx, ty);
+  text('문턱 진동수 f₀ = ' + f0.toFixed(2) + ' ×10¹⁴ Hz', rx, ty + lh);
+
+  fill(50, 100, 200);
+  text('정지전압 V₀ = ' + v_str + ' V', rx, ty + lh * 2);
+
+  // 슬라이더 레이블
+  fill(120);
+  textSize(9.5);
+  textAlign(LEFT);
+  text('일함수 φ 조절', PAD.l, H - 60);
+
+  // 버튼 행 레이블
+  fill(120);
+  textSize(9.5);
+  textAlign(LEFT);
+  text('금속 선택', PAD.l, H - 30);
+}
+</script>
+</body>
+</html>

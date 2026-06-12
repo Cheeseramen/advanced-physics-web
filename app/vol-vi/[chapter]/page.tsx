@@ -14,6 +14,7 @@ import DisplayMath from '@/components/textbook/DisplayMath'
 import SummaryCard from '@/components/textbook/SummaryCard'
 import SummaryGrid from '@/components/textbook/SummaryGrid'
 import PageNav from '@/components/PageNav'
+import PhetButton from '@/components/PhetButton'
 import { getAdjacentChapters } from '@/lib/chapters'
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
@@ -25,7 +26,13 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
   )
 }
 
-const components = { h1: SectionTitle, LawBox, ExBox, SummaryBox, Solution, Result, DisplayMath, SummaryCard, SummaryGrid }
+function SubSectionTitle({ children }: { children: React.ReactNode }) {
+  return (
+    <h2 className="text-lg font-bold text-[#791215] mt-7 mb-2">{children}</h2>
+  )
+}
+
+const components = { h1: SectionTitle, h2: SubSectionTitle, LawBox, ExBox, SummaryBox, Solution, Result, DisplayMath, SummaryCard, SummaryGrid, PhetButton }
 
 interface Props {
   params: Promise<{ chapter: string }>

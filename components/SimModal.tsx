@@ -29,8 +29,8 @@ export default function SimModal({ keyword, onClose, src, html }: SimModalProps)
         {src ? (
           <iframe
             src={src}
-            width={480}
-            height={320}
+            width={600}
+            height={440}
             className="block border-0"
             title={`${keyword} 시뮬레이션`}
           />
@@ -38,8 +38,8 @@ export default function SimModal({ keyword, onClose, src, html }: SimModalProps)
           <iframe
             srcDoc={html}
             sandbox="allow-scripts"
-            width={480}
-            height={320}
+            width={600}
+            height={440}
             className="block border-0"
             title={`${keyword} 시뮬레이션`}
           />

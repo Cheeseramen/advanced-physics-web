@@ -3,6 +3,7 @@ import { NextRequest } from 'next/server'
 import fs from 'fs'
 import path from 'path'
 import { IMAGE_DESCRIPTIONS } from '@/lib/imageDescriptions'
+import { SIM_DESCRIPTIONS } from '@/lib/simulationDescriptions'
 
 const BASE_PROMPT = `당신은 보인고등학교 고급물리학 교재의 AI 튜터입니다.
 교재는 세 권으로 구성되어 있습니다:
@@ -46,10 +47,13 @@ function getPageContext(currentPage: string): string {
 }
 
 export async function POST(req: NextRequest) {
-  const { messages, currentPage } = await req.json()
+  const { messages, currentPage, simKeyword } = await req.json()
 
   const pageContext = currentPage ? getPageContext(currentPage) : ''
-  const systemInstruction = BASE_PROMPT + pageContext
+  const simContext = simKeyword && SIM_DESCRIPTIONS[simKeyword]
+    ? `\n\n=== 방금 학생이 본 시뮬레이션: ${simKeyword} ===\n${SIM_DESCRIPTIONS[simKeyword]}\n=== 끝 ===`
+    : ''
+  const systemInstruction = BASE_PROMPT + pageContext + simContext
 
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
   const model = genAI.getGenerativeModel({

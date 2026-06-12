@@ -75,18 +75,22 @@ export default function ChatWidget() {
   }, [messages, loading])
 
   useEffect(() => {
+    if (open) bottomRef.current?.scrollIntoView({ behavior: 'instant' })
+  }, [open])
+
+  useEffect(() => {
     function handleSimChat(e: Event) {
       const { keyword } = (e as CustomEvent).detail
       const msg = `방금 "${keyword}" 시뮬레이션을 봤어. 이 시뮬레이션에서 무엇을 볼 수 있는지 설명해줘.`
       setOpen(true)
-      sendMessage(msg)
+      sendMessage(msg, messages, keyword)
     }
     window.addEventListener('open-sim-chat', handleSimChat)
     return () => window.removeEventListener('open-sim-chat', handleSimChat)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname])
 
-  async function sendMessage(text: string, currentMessages = messages) {
+  async function sendMessage(text: string, currentMessages = messages, simKeyword?: string) {
     if (!text || loading) return
 
     const next: Message[] = [...currentMessages, { role: 'user', content: text }]
@@ -97,7 +101,7 @@ export default function ChatWidget() {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: next, currentPage: pathname }),
+        body: JSON.stringify({ messages: next, currentPage: pathname, simKeyword }),
       })
 
       if (!res.ok) {

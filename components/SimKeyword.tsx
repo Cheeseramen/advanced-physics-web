@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { createPortal } from 'react-dom'
 import SimModal from './SimModal'
 
 interface SimKeywordProps {
@@ -8,9 +9,10 @@ interface SimKeywordProps {
   keyword?: string
   context?: string
   src?: string
+  external?: boolean
 }
 
-export default function SimKeyword({ children, keyword, context, src }: SimKeywordProps) {
+export default function SimKeyword({ children, keyword, context, src, external }: SimKeywordProps) {
   const [html, setHtml] = useState<string | null>(null)
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -20,6 +22,7 @@ export default function SimKeyword({ children, keyword, context, src }: SimKeywo
 
   async function handleClick() {
     if (loading) return
+    if (external && src) { window.open(src, '_blank', 'noopener,noreferrer'); return }
     if (src || html) { setOpen(true); return }
 
     setLoading(true)
@@ -52,13 +55,14 @@ export default function SimKeyword({ children, keyword, context, src }: SimKeywo
       {error && (
         <span className="ml-2 text-xs text-red-500">{error}</span>
       )}
-      {open && (src || html) && (
+      {open && (src || html) && createPortal(
         <SimModal
           src={src}
           html={html ?? undefined}
           keyword={kw}
           onClose={() => setOpen(false)}
-        />
+        />,
+        document.body
       )}
     </>
   )
