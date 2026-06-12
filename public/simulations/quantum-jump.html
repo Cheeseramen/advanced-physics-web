@@ -80,8 +80,20 @@ function handlePlayerInput() {
   const speed = 6;
   if (keyIsDown(LEFT_ARROW)  || keyIsDown(65)) electron.x -= speed;
   if (keyIsDown(RIGHT_ARROW) || keyIsDown(68)) electron.x += speed;
+  if (touches.length > 0) electron.x = touches[0].x;
   electron.x = constrain(electron.x, 60, W - 60);
 }
+
+function touchStarted() {
+  if (gameState === 'START' || gameState === 'WIN') {
+    electron = { n: 1, x: W / 2, y: 380, targetY: 380 };
+    photons = []; floatingTexts = []; frameCounter = 0;
+    gameState = 'PLAY';
+  }
+  return false; // 스크롤 방지
+}
+
+function touchMoved() { return false; }
 
 function updateAndDrawElectron() {
   electron.y = lerp(electron.y, electron.targetY, 0.2);
@@ -186,7 +198,7 @@ function drawUI() {
   fill(100);
   textSize(12);
   textAlign(LEFT, TOP);
-  text("조작: ← / → 방향키", 20, 18);
+  text("조작: ← / → 방향키 또는 터치", 20, 18);
   textAlign(RIGHT, TOP);
   fill(...BR);
   text("목표: n = 4 상태로 들뜨기", W - 20, 18);
@@ -222,7 +234,7 @@ function drawStartScreen() {
   noStroke();
   fill(...BR);
   textSize(13);
-  text("아무 키나 눌러서 시작", W / 2, H / 2 + 82);
+  text("아무 키나 누르거나 화면을 터치하여 시작", W / 2, H / 2 + 82);
 
   if (keyIsPressed) gameState = 'PLAY';
 }
