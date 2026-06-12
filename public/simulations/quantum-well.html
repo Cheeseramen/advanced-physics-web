@@ -4,15 +4,14 @@
 <meta charset="utf-8">
 <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
 <style>
-  body { margin: 0; overflow: hidden; background: #fff; font-family: 'Noto Sans KR', sans-serif; transition: background 0.3s; }
+  body { margin: 0; overflow: hidden; background: #fff; font-family: 'Noto Sans KR', sans-serif; }
 </style>
 </head>
 <body>
 <script>
 // --- 상태 변수 ---
-let isDark = false;
 let isPlaying = true;
-let isSuper = false; // 상태 중첩 모드 여부
+let isSuper = false;
 let time = 0;
 let current_n = 1;
 
@@ -26,35 +25,33 @@ let nBtns = [];
 let superBtn;
 let playBtn;
 
+// --- 색상 팔레트 (라이트 고정) ---
+const C = {
+  bg:        '#ffffff',
+  text:      '#1a1a1a',
+  textMuted: '#888888',
+  grid:      '#e2e2e2',
+  wall:      '#333333',
+  wave:      [26, 90, 180],       // 파동함수: 파랑
+  waveFill:  [26, 90, 180, 35],
+  prob:      [121, 18, 21],       // 확률밀도: boinred
+  probFill:  [121, 18, 21, 40],
+  panelBox:  '#cccccc',
+  tooltipBg: [255, 255, 255, 230],
+  active:    '#791215',           // 활성 버튼: boinred
+};
+
 function setup() {
   createCanvas(windowWidth, windowHeight);
 
-  // 시스템 다크모드 감지
-  let mq = window.matchMedia('(prefers-color-scheme: dark)');
-  isDark = mq.matches;
-  mq.addEventListener('change', e => {
-    isDark = e.matches;
-    document.body.style.background = isDark ? '#121212' : '#ffffff';
-    updateUIStyles();
-  });
-  document.body.style.background = isDark ? '#121212' : '#ffffff';
-
-  // UI 버튼 생성
   for (let i = 1; i <= 5; i++) {
     let btn = createButton('n = ' + i);
-    btn.mousePressed(() => {
-      isSuper = false;
-      current_n = i;
-      updateUIStyles();
-    });
+    btn.mousePressed(() => { isSuper = false; current_n = i; updateUIStyles(); });
     nBtns.push(btn);
   }
 
   superBtn = createButton('상태 중첩 (n=1 & 2)');
-  superBtn.mousePressed(() => {
-    isSuper = true;
-    updateUIStyles();
-  });
+  superBtn.mousePressed(() => { isSuper = true; updateUIStyles(); });
 
   playBtn = createButton('⏸ 일시정지');
   playBtn.mousePressed(() => {
@@ -63,7 +60,6 @@ function setup() {
     updateUIStyles();
   });
 
-  // 공통 버튼 스타일 적용 (초기화)
   [...nBtns, superBtn, playBtn].forEach(btn => {
     btn.style('font-family', "'Noto Sans KR', sans-serif");
     btn.style('font-size', '12px');
@@ -81,180 +77,132 @@ function windowResized() {
   calculateLayout();
 }
 
-// 반응형 레이아웃 계산
 function calculateLayout() {
   let W = width;
   let H = height;
 
-  // 최소 여백 보장
   PAD.l = Math.max(50, W * 0.08);
   PAD.r = Math.max(20, W * 0.04);
   PAD.t = Math.max(30, H * 0.08);
-  PAD.b = 100; // 하단 UI 공간 고정
+  PAD.b = 90;
 
   let PW = W - PAD.l - PAD.r;
   let PH = H - PAD.t - PAD.b;
+  let gap = 30;
 
-  let gap = 30; // 좌우 그래프 사이 간격
   gW = (PW - gap) / 2;
   sW = gW;
   gH = PH;
   sH = PH;
-
   gX = PAD.l;
   gY = PAD.t;
   sX = gX + gW + gap;
   sY = PAD.t;
 
-  // 버튼 위치 배치
-  let btnY1 = height - 85;
-  let btnY2 = height - 45;
+  let btnY = height - 40;
 
   for (let i = 0; i < 5; i++) {
-    nBtns[i].position(PAD.l + i * 55, btnY1);
+    nBtns[i].position(PAD.l + i * 55, btnY);
     nBtns[i].size(50, 26);
   }
-
-  superBtn.position(PAD.l, btnY2);
+  superBtn.position(PAD.l + 5 * 55 + 8, btnY);
   superBtn.size(130, 26);
-
-  playBtn.position(PAD.l + 140, btnY2);
+  playBtn.position(PAD.l + 5 * 55 + 8 + 138, btnY);
   playBtn.size(90, 26);
 }
 
-// 테마 및 상태에 따른 버튼 스타일 업데이트
 function updateUIStyles() {
-  let btnBg = isDark ? '#2a2a2a' : '#ffffff';
-  let btnCol = isDark ? '#e0e0e0' : '#333333';
-  let btnBorder = isDark ? '1px solid #555' : '1px solid #ccc';
-  let activeBg = isDark ? '#3a7bd5' : '#1e64c8';
-
-  // n 버튼들
   for (let i = 0; i < 5; i++) {
     if (!isSuper && current_n === i + 1) {
-      nBtns[i].style('background', activeBg);
+      nBtns[i].style('background', C.active);
       nBtns[i].style('color', '#ffffff');
-      nBtns[i].style('border', '1px solid ' + activeBg);
+      nBtns[i].style('border', '1px solid ' + C.active);
     } else {
-      nBtns[i].style('background', btnBg);
-      nBtns[i].style('color', btnCol);
-      nBtns[i].style('border', btnBorder);
+      nBtns[i].style('background', '#ffffff');
+      nBtns[i].style('color', '#333333');
+      nBtns[i].style('border', '1px solid #cccccc');
     }
   }
 
-  // 중첩 버튼
   if (isSuper) {
-    superBtn.style('background', '#d9455f'); // 중첩은 붉은 계열로 강조
+    superBtn.style('background', C.active);
     superBtn.style('color', '#ffffff');
-    superBtn.style('border', '1px solid #d9455f');
+    superBtn.style('border', '1px solid ' + C.active);
   } else {
-    superBtn.style('background', btnBg);
-    superBtn.style('color', btnCol);
-    superBtn.style('border', btnBorder);
+    superBtn.style('background', '#ffffff');
+    superBtn.style('color', '#333333');
+    superBtn.style('border', '1px solid #cccccc');
   }
 
-  // 재생 버튼
-  playBtn.style('background', btnBg);
-  playBtn.style('color', btnCol);
-  playBtn.style('border', btnBorder);
-}
-
-// 다크모드/라이트모드 색상 팔레트
-function getColors() {
-  return {
-    bg: isDark ? color(18, 18, 18) : color(255, 255, 255),
-    text: isDark ? color(220) : color(40),
-    textMuted: isDark ? color(150) : color(100),
-    grid: isDark ? color(60) : color(220),
-    wall: isDark ? color(100) : color(60),
-    wave: isDark ? color(100, 180, 255) : color(30, 100, 220),
-    waveFill: isDark ? color(100, 180, 255, 40) : color(30, 100, 220, 30),
-    prob: isDark ? color(255, 120, 120) : color(200, 50, 50),
-    probFill: isDark ? color(255, 120, 120, 60) : color(220, 80, 80, 80),
-    panelBox: isDark ? color(40) : color(60),
-    tooltipBg: isDark ? color(30, 30, 30, 220) : color(255, 255, 255, 220)
-  };
+  playBtn.style('background', '#ffffff');
+  playBtn.style('color', '#333333');
+  playBtn.style('border', '1px solid #cccccc');
 }
 
 function draw() {
-  if (isPlaying) {
-    time += 0.05; // 시간의 흐름 (애니메이션 속도)
-  }
+  if (isPlaying) time += 0.05;
 
-  let c = getColors();
-  background(c.bg);
-
-  drawLeftPanel(c);
-  drawRightPanel(c);
-  drawAxes(c);
-  drawInfoBox(c);
-  handleHover(c);
+  background(255);
+  drawLeftPanel();
+  drawRightPanel();
+  drawAxes();
+  drawInfoBox();
+  handleHover();
 }
 
-// 1. 왼쪽 패널 — 에너지 준위 기반 파동함수 Re(ψ)
-function drawLeftPanel(c) {
-  // 테두리 및 벽
-  stroke(c.panelBox);
+function drawLeftPanel() {
+  stroke(C.panelBox);
   strokeWeight(1.5);
   noFill();
   rect(gX, gY, gW, gH);
 
-  stroke(c.wall);
+  stroke(C.wall);
   strokeWeight(4);
   line(gX, gY, gX, gY + gH);
   line(gX + gW, gY, gX + gW, gY + gH);
 
-  // 에너지 준위 기준선 그리기 (E = 1, 4, 9, 16, 25)
-  // 에너지 스케일: -2 ~ 28
   for (let n = 1; n <= 5; n++) {
     let E = n * n;
     let yE = map(E, -2, 28, gY + gH, gY);
 
     drawingContext.setLineDash([4, 4]);
-    stroke(c.grid);
+    stroke(C.grid);
     strokeWeight(1);
     line(gX, yE, gX + gW, yE);
     drawingContext.setLineDash([]);
 
-    fill(c.textMuted);
+    fill(C.textMuted);
     noStroke();
     textAlign(RIGHT, CENTER);
     textSize(10);
     text(`E${n}`, gX - 4, yE);
   }
 
-  let waveAmplitude = 2.0; // 시각적 진폭 (에너지 단위 스케일)
-
+  let amp = 2.0;
   if (isSuper) {
-    // 중첩 상태 (n=1 & n=2)를 각각의 에너지 준위에 그리기
-    drawWave(1, time, 1 / Math.sqrt(2), waveAmplitude, c);
-    drawWave(2, time, 1 / Math.sqrt(2), waveAmplitude, c);
+    drawWave(1, time, 1 / Math.sqrt(2), amp);
+    drawWave(2, time, 1 / Math.sqrt(2), amp);
   } else {
-    // 단일 상태 그리기
-    drawWave(current_n, time, 1, waveAmplitude, c);
+    drawWave(current_n, time, 1, amp);
   }
 
-  // 패널 제목
-  fill(c.text);
+  fill(C.text);
   noStroke();
   textSize(13);
   textAlign(CENTER);
   text("파동함수 Re[ψₙ(x,t)]", gX + gW / 2, gY - 12);
 }
 
-// 파동함수 단일 곡선 그리기 헬퍼
-function drawWave(n, t, coeff, amp, c) {
+function drawWave(n, t, coeff, amp) {
   let E = n * n;
   let yBaseline = map(E, -2, 28, gY + gH, gY);
 
-  // 파동 곡선 배경 (채우기)
-  fill(c.waveFill);
+  fill(...C.waveFill);
   noStroke();
   beginShape();
   vertex(gX, yBaseline);
   for (let i = 0; i <= gW; i++) {
     let x_phys = map(i, 0, gW, 0, 1);
-    // 슈뢰딩거 시간 의존 파동함수의 실수부: cos(E*t)
     let re_psi = coeff * Math.sin(n * Math.PI * x_phys) * Math.cos(E * t);
     let y = map(E + amp * re_psi, -2, 28, gY + gH, gY);
     vertex(gX + i, y);
@@ -262,9 +210,8 @@ function drawWave(n, t, coeff, amp, c) {
   vertex(gX + gW, yBaseline);
   endShape(CLOSE);
 
-  // 파동 곡선 (선)
   noFill();
-  stroke(c.wave);
+  stroke(...C.wave);
   strokeWeight(2.0);
   beginShape();
   for (let i = 0; i <= gW; i++) {
@@ -276,22 +223,20 @@ function drawWave(n, t, coeff, amp, c) {
   endShape();
 }
 
-// 2. 오른쪽 패널 — 확률밀도 |ψ(x,t)|²
-function drawRightPanel(c) {
-  stroke(c.panelBox);
+function drawRightPanel() {
+  stroke(C.panelBox);
   strokeWeight(1.5);
   noFill();
   rect(sX, sY, sW, sH);
 
-  stroke(c.wall);
+  stroke(C.wall);
   strokeWeight(4);
   line(sX, sY, sX, sY + sH);
   line(sX + sW, sY, sX + sW, sY + sH);
 
-  // Y 스케일: 확률밀도 0 ~ 2.0 (중첩 시 최대값이 1.5에 달하므로 여유를 둠)
   let y0 = map(0, 0, 2.0, sY + sH, sY);
 
-  fill(c.probFill);
+  fill(...C.probFill);
   noStroke();
   beginShape();
   vertex(sX, y0);
@@ -305,7 +250,7 @@ function drawRightPanel(c) {
   endShape(CLOSE);
 
   noFill();
-  stroke(c.prob);
+  stroke(...C.prob);
   strokeWeight(2.5);
   beginShape();
   for (let i = 0; i <= sW; i++) {
@@ -316,41 +261,34 @@ function drawRightPanel(c) {
   }
   endShape();
 
-  fill(c.text);
+  fill(C.text);
   noStroke();
   textSize(13);
   textAlign(CENTER);
   text("확률밀도 |Ψ(x,t)|²", sX + sW / 2, sY - 12);
 }
 
-// 주어진 위치(x)에서 현재 시간에 대한 확률밀도 계산
 function calculateProbability(x_phys) {
   if (isSuper) {
-    // Ψ = (1/√2)ψ1 + (1/√2)ψ2
-    // |Ψ|² = 1/2*sin²(πx) + 1/2*sin²(2πx) + sin(πx)sin(2πx)cos((E2-E1)t)
-    // E1=1, E2=4 이므로 E2-E1 = 3
     let term1 = 0.5 * Math.pow(Math.sin(Math.PI * x_phys), 2);
     let term2 = 0.5 * Math.pow(Math.sin(2 * Math.PI * x_phys), 2);
-    let crossTerm = Math.sin(Math.PI * x_phys) * Math.sin(2 * Math.PI * x_phys) * Math.cos(3 * time);
-    return term1 + term2 + crossTerm;
+    let cross = Math.sin(Math.PI * x_phys) * Math.sin(2 * Math.PI * x_phys) * Math.cos(3 * time);
+    return term1 + term2 + cross;
   } else {
     return Math.pow(Math.sin(current_n * Math.PI * x_phys), 2);
   }
 }
 
-// 3. 축 레이블 및 수치
-function drawAxes(c) {
-  fill(c.textMuted);
+function drawAxes() {
+  fill(C.textMuted);
   noStroke();
 
-  // 왼쪽 X축
   textSize(12);
   textAlign(CENTER);
-  text("0", gX, gY + gH + 18);
-  text("L/2", gX + gW / 2, gY + gH + 18);
-  text("L", gX + gW, gY + gH + 18);
+  text("0",   gX,         gY + gH + 18);
+  text("L/2", gX + gW/2,  gY + gH + 18);
+  text("L",   gX + gW,    gY + gH + 18);
 
-  // 왼쪽 Y축 타이틀
   push();
   translate(gX - 32, gY + gH / 2);
   rotate(-HALF_PI);
@@ -359,87 +297,82 @@ function drawAxes(c) {
   text("에너지 (E)", 0, 0);
   pop();
 
-  // 오른쪽 X축
   textAlign(CENTER);
-  text("0", sX, sY + sH + 18);
-  text("L/2", sX + sW / 2, sY + sH + 18);
-  text("L", sX + sW, sY + sH + 18);
+  text("0",   sX,         sY + sH + 18);
+  text("L/2", sX + sW/2,  sY + sH + 18);
+  text("L",   sX + sW,    sY + sH + 18);
 
-  // X축 타이틀 공통 배치 (그래프 중앙 하단)
-  fill(c.text);
+  fill(C.text);
   textSize(13);
   text("상자 안의 위치 x", width / 2, gY + gH + 36);
 
-  // 오른쪽 Y축 눈금 (0, 1.0, 2.0)
-  fill(c.textMuted);
+  fill(C.textMuted);
   textSize(11);
   textAlign(RIGHT, CENTER);
   text("2.0", sX - 6, map(2.0, 0, 2.0, sY + sH, sY));
   text("1.0", sX - 6, map(1.0, 0, 2.0, sY + sH, sY));
-  text("0", sX - 6, map(0, 0, 2.0, sY + sH, sY));
+  text("0",   sX - 6, map(0,   0, 2.0, sY + sH, sY));
 }
 
-// 4. 정보 박스
-function drawInfoBox(c) {
+function drawInfoBox() {
   let boxW = 160;
   let rx = sX + sW - boxW - 12;
   let ry = sY + 12;
 
-  fill(c.tooltipBg);
-  noStroke();
+  fill(...C.tooltipBg);
+  stroke(C.panelBox);
+  strokeWeight(1);
   rect(rx, ry, boxW, 64, 6);
 
-  fill(c.text);
+  fill(C.text);
+  noStroke();
   textSize(13);
   textAlign(LEFT);
 
   if (isSuper) {
-    text("상태: (ψ₁ + ψ₂) / √2", rx + 14, ry + 24);
+    text("상태: (ψ₁ + ψ₂) / √2",    rx + 14, ry + 24);
     text("기대 에너지 <E> = 2.5 E₁", rx + 14, ry + 46);
   } else {
-    text(`상태: 양자수 n = ${current_n}`, rx + 14, ry + 24);
+    text(`상태: 양자수 n = ${current_n}`,       rx + 14, ry + 24);
     text(`에너지 E = ${current_n * current_n} E₁`, rx + 14, ry + 46);
   }
 }
 
-// 5. 호버 인터랙션 (마우스 위치에 따른 확률 데이터 시각화)
-function handleHover(c) {
+function handleHover() {
   if (mouseX >= sX && mouseX <= sX + sW && mouseY >= sY && mouseY <= sY + sH) {
     let x_phys = map(mouseX, sX, sX + sW, 0, 1);
     let prob = calculateProbability(x_phys);
 
-    // 위치 지시선
     drawingContext.setLineDash([3, 3]);
-    stroke(c.textMuted);
+    stroke(C.textMuted);
     strokeWeight(1);
     line(mouseX, sY, mouseX, sY + sH);
     drawingContext.setLineDash([]);
 
-    // 교차점 마커
     let yPoint = map(prob, 0, 2.0, sY + sH, sY);
-    fill(c.prob);
+    fill(...C.prob);
     noStroke();
     ellipse(mouseX, yPoint, 8, 8);
 
-    // 툴팁 렌더링
     let ttW = 110;
     let ttH = 46;
     let ttX = mouseX - ttW / 2;
     let ttY = mouseY - ttH - 15;
 
-    // 화면 밖으로 벗어나지 않도록 보정
     if (ttX < sX) ttX = sX;
     if (ttX + ttW > sX + sW) ttX = sX + sW - ttW;
     if (ttY < sY) ttY = mouseY + 15;
 
-    fill(c.tooltipBg);
-    noStroke();
+    fill(...C.tooltipBg);
+    stroke(C.panelBox);
+    strokeWeight(1);
     rect(ttX, ttY, ttW, ttH, 4);
 
-    fill(c.text);
+    fill(C.text);
+    noStroke();
     textAlign(CENTER, CENTER);
     textSize(11);
-    text(`위치 x = ${x_phys.toFixed(2)} L\n확률밀도 = ${prob.toFixed(2)}`, ttX + ttW / 2, ttY + ttH / 2);
+    text(`위치 x = ${x_phys.toFixed(2)} L\n확률밀도 = ${prob.toFixed(2)}`, ttX + ttW/2, ttY + ttH/2);
   }
 }
 </script>
