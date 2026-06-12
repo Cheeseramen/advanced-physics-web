@@ -27,12 +27,6 @@ const toc = [
       { num: '📋', title: '중단원 핵심 정리', href: '/vol-vii/2-summary' },
     ],
   },
-  {
-    title: 'Ⅶ-3. 인터랙티브 시뮬레이션',
-    sections: [
-      { num: '🎮', title: '인터랙티브 시뮬레이션', href: '/vol-vii/3-simulation' },
-    ],
-  },
 ]
 
 export default function VolVIIPage() {
