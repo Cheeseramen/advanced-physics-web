@@ -3,10 +3,8 @@
 
 /* SecretCat 힌트 — 흰색에서 boinred로 반짝인 뒤 red-200으로 정착 */
 @keyframes cat-sparkle {
-  0%        { color: #ffffff; }
-  15%, 45%  { color: #791215; }
-  30%, 60%  { color: #ffffff; }
-  80%, 100% { color: #fecaca; }
+  0%, 100% { color: #ffffff; }
+  40%, 60%  { color: #791215; }
 }
 
 /* SecretFormula 힌트 반짝임 */
