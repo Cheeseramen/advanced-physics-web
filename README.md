@@ -54,22 +54,6 @@
 
 ---
 
-## 로컬 실행
-
-```bash
-cd web
-npm install
-npm run dev   # http://localhost:3000
-```
-
-`.env.local` 파일에 Gemini API 키가 필요하다:
-
-```
-GEMINI_API_KEY=your_api_key_here
-```
-
----
-
 ## 이스터에그
 
 양자역학 파트에 숨겨진 인터랙티브 이스터에그 3종이 있다.
