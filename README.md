@@ -70,3 +70,17 @@ Vercel 환경변수: 대시보드 → Settings → Environment Variables → `GE
 | `quantum-well.html` | 2-02 슈뢰딩거 방정식 | ✅ |
 | `compton.html` | 1-04 콤프턴 산란 | 🔲 |
 | `uncertainty.html` | 2-03 불확정성 원리 | 🔲 |
+
+---
+
+## 이스터에그 (개발자 노트)
+
+양자역학 파트에 3개의 숨겨진 인터랙티브 이스터에그가 있다.
+
+| 트리거 | 내용 | 파일 |
+|--------|------|------|
+| `2-05-measurement.mdx` 하단 `=^. .^=` 클릭 | 슈뢰딩거의 고양이 — 상자를 열어 생사를 확인 | `components/EasterEgg.tsx` |
+| 사이트 어디서나 `hbar` 타이핑 | 하이젠베르크 불확정성 게임 — 파동 그물로 전자 포획 | `components/HeisenbergEasterEgg.tsx` + `public/simulations/heisenberg-easter-egg.html` |
+| `1-06-bohr.mdx` 에너지 준위 식 $E_n = -13.6/n^2$ 클릭 | 양자 도약 게임 — 정확한 ΔE의 광자를 흡수해 들뜨기 | `components/QuantumJumpEasterEgg.tsx` + `public/simulations/quantum-jump.html` |
+
+모두 모바일 터치를 지원한다.
