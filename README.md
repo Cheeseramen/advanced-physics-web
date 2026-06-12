@@ -4,6 +4,8 @@
 
 **배포 URL**: https://advanced-physics-web.vercel.app/
 
+**GitHub**: https://github.com/Cheeseramen/advanced-physics-web
+
 ---
 
 ## 구성
