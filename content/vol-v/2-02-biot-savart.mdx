@@ -1,0 +1,58 @@
+# 비오-사바르 법칙 (Biot-Savart Law)
+
+전류 요소 $I\,d\mathbf{l}$이 만드는 미소 자기장:
+
+<LawBox title="비오-사바르 법칙">
+
+<DisplayMath formula="d\mathbf{B} = \frac{\mu_0}{4\pi}\frac{I\,d\mathbf{l}\times\hat{\mathbf{r}}}{r^2}" />
+
+- $d\mathbf{l}$: 전류 요소의 방향
+- $\hat{\mathbf{r}}$: 전류 요소 → 관찰점 방향
+- $r$: 전류 요소와 관찰점 사이의 거리
+- $\mu_0 = 4\pi\times10^{-7}\ \mathrm{T{\cdot}m/A}$: 진공 투자율
+
+비오-사바르 법칙은 전류에 대한 쿨롱 법칙과 같은 역할을 한다.
+
+$$\text{쿨롱 법칙: 전하}\;\longrightarrow\;\text{전기장} \qquad \text{비오-사바르 법칙: 전류}\;\longrightarrow\;\text{자기장}$$
+
+</LawBox>
+
+<ExBox num="5.05" title="무한 직선 전류의 자기장">
+
+선전류 $I$가 흐르는 무한 직선 도선으로부터 수직 거리 $r$인 지점의 자기장을 구하라.
+
+<Solution>
+
+도선 위 전류 요소 $I\,dz$를 적분한다. 관찰점까지의 거리 $R$, 각도를 $\theta$로 놓으면
+
+$$dB = \frac{\mu_0}{4\pi}\frac{I\,dz\,\sin\theta}{R^2}$$
+
+$z = r\cot\theta$로 치환하면 $dz = -\dfrac{r}{\sin^2\theta}\,d\theta$, $R = \dfrac{r}{\sin\theta}$이므로
+
+<DisplayMath formula="B = \int_0^\pi \frac{\mu_0 I}{4\pi}\frac{\sin\theta}{r}\,d\theta = \frac{\mu_0 I}{4\pi r}\bigl[-\cos\theta\bigr]_0^\pi = \frac{\mu_0 I}{2\pi r}" />
+
+<Result formula="B = \dfrac{\mu_0 I}{2\pi r}" />
+
+방향: 오른손 법칙에 의해, 전류를 감싸는 원 방향($\hat{\boldsymbol{\phi}}$).
+
+</Solution>
+
+</ExBox>
+
+<ExBox num="5.06" title="원형 전류 중심의 자기장">
+
+반지름 $R$인 원형 도선에 전류 $I$가 흐를 때, 중심에서의 자기장을 구하라.
+
+<Solution>
+
+원형 도선의 모든 전류 요소 $I\,d\mathbf{l}$은 중심으로부터 거리 $R$에 있고, $d\mathbf{l}\perp\hat{\mathbf{r}}$이므로 $|d\mathbf{l}\times\hat{\mathbf{r}}| = dl$이다.
+
+모든 $d\mathbf{B}$의 방향이 동일(도선 평면에 수직)하므로
+
+<DisplayMath formula="B = \oint \frac{\mu_0 I}{4\pi R^2}\,dl = \frac{\mu_0 I}{4\pi R^2}\cdot 2\pi R" />
+
+<Result formula="B = \dfrac{\mu_0 I}{2R}" />
+
+</Solution>
+
+</ExBox>

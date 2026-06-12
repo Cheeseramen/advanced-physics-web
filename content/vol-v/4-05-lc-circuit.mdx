@@ -1,0 +1,20 @@
+# LC 회로
+
+축전기와 인덕터만 있는 회로이다. KVL을 적용하면
+
+$$L\frac{dI}{dt} + \frac{q}{C} = 0$$
+
+$I = dq/dt$를 대입하면
+
+$$L\frac{d^2q}{dt^2} + \frac{1}{C}q = 0$$
+
+이는 단순 조화 진동 방정식과 같은 꼴이다.
+
+<LawBox title="LC 회로의 공명 진동수">
+
+<DisplayMath formula="\omega_0 = \frac{1}{\sqrt{LC}}, \qquad f_0 = \frac{1}{2\pi\sqrt{LC}}" />
+
+- 전기장 에너지 $\leftrightarrow$ 자기장 에너지가 주기적으로 교환된다.
+- 저항이 없으면 에너지 손실 없이 진동이 지속된다.
+
+</LawBox>

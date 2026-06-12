@@ -1,0 +1,45 @@
+# 로런츠 힘 (Lorentz Force)
+
+전기장과 자기장이 동시에 존재할 때, 전하 $q$인 입자가 받는 전체 힘이다.
+
+<LawBox title="로런츠 힘">
+
+<DisplayMath formula="\mathbf{F} = q(\mathbf{E} + \mathbf{v}\times\mathbf{B})" />
+
+- **전기력** $q\mathbf{E}$: 속도에 무관, 일을 할 수 있음
+- **자기력** $q\mathbf{v}\times\mathbf{B}$: 항상 $\mathbf{v}$에 수직 → 속력 변화 없음, 일을 하지 않음 ($W=0$)
+- 방향: 오른손 법칙 ($\mathbf{v}\times\mathbf{B}$)
+
+</LawBox>
+
+## 균일한 자기장 속의 원운동
+
+$\mathbf{E}=0$이고 $\mathbf{v}\perp\mathbf{B}$인 경우, 자기력이 구심력 역할을 한다.
+
+$$qvB = \frac{mv^2}{r} \qquad\Rightarrow\qquad r = \frac{mv}{qB}$$
+
+이 원리를 이용하는 장치가 <strong>사이클로트론(cyclotron)</strong>이다.
+
+<ExBox num="5.10" title="자기장 속 전자의 원운동">
+
+전자($q=1.6\times10^{-19}\,\mathrm{C}$, $m=9.11\times10^{-31}\,\mathrm{kg}$)가 $B=5.0\times10^{-3}\,\mathrm{T}$인 균일한 자기장 속에서 $v=2.0\times10^6\,\mathrm{m/s}$로 운동한다. 원운동 반지름 $r$과 주기 $T$를 구하라.
+
+<Solution>
+
+자기력 = 구심력:
+
+<DisplayMath formula="r = \frac{mv}{qB} = \frac{9.11\times10^{-31}\times2.0\times10^6}{1.6\times10^{-19}\times5.0\times10^{-3}}" />
+
+<Result formula="r \approx 2.28\times10^{-3}\,\mathrm{m}\ =\ 2.28\,\mathrm{mm}" />
+
+주기:
+
+<DisplayMath formula="T = \frac{2\pi m}{qB} = \frac{2\pi\times9.11\times10^{-31}}{1.6\times10^{-19}\times5.0\times10^{-3}}" />
+
+<Result formula="T \approx 7.15\times10^{-9}\,\mathrm{s}\ =\ 7.15\,\mathrm{ns}" />
+
+$T$는 $v$에 무관하다 — 사이클로트론의 원리.
+
+</Solution>
+
+</ExBox>

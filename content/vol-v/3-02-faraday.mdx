@@ -1,0 +1,40 @@
+# 자기선속과 패러데이 법칙
+
+자기장이 어떤 면을 통과하는 정도를 <strong>자기선속(magnetic flux)</strong>이라 한다.
+
+$$\Phi_B = \int_S \mathbf{B}\cdot d\mathbf{A}$$
+
+<LawBox title="패러데이 법칙">
+
+닫힌 회로를 통과하는 자기선속이 변하면 회로에 기전력이 유도된다.
+
+<DisplayMath formula="\varepsilon = -\frac{d\Phi_B}{dt}" />
+
+- 음의 부호: **렌츠의 법칙** — 유도 기전력은 자기선속 변화를 방해하는 방향
+- $N$회 감긴 코일: $\varepsilon = -N\dfrac{d\Phi_B}{dt}$
+
+</LawBox>
+
+## 패러데이 법칙의 적분형
+
+기전력은 전기장의 닫힌 선적분으로 표현할 수 있다.
+
+$$\varepsilon = \oint_C \mathbf{E}\cdot d\mathbf{l}$$
+
+패러데이 법칙 $\varepsilon = -d\Phi_B/dt$에 대입하면 **적분형 패러데이 법칙**을 얻는다.
+
+<LawBox title="패러데이 법칙 (적분형 · 맥스웰 방정식 형태)">
+
+<DisplayMath formula="\oint_C \mathbf{E}\cdot d\mathbf{l} = -\frac{d\Phi_B}{dt}" />
+
+</LawBox>
+
+## 미분형 유도 (스토크스 정리 적용)
+
+스토크스 정리(Stokes' theorem)를 좌변에 적용하면
+
+$$\iint_S (\nabla\times\mathbf{E})\cdot d\mathbf{A} = -\int_S \frac{\partial \mathbf{B}}{\partial t}\cdot d\mathbf{A}$$
+
+임의의 곡면 $S$에 대해 성립하므로
+
+$$\nabla\times\mathbf{E} = -\frac{\partial \mathbf{B}}{\partial t}$$

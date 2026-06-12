@@ -1,0 +1,54 @@
+# 콤프턴 산란과 광자의 운동량 (Compton Scattering)
+
+아인슈타인은 빛이 에너지 덩어리(광자)임을 보였다.
+그렇다면 광자는 입자처럼 **운동량**도 가질까?
+콤프턴(Compton, 1923)은 X선과 전자의 충돌 실험으로 이를 확인했다.
+
+고전 파동 이론에 따르면, 자유 전자에 산란된 X선의 파장은 변하지 않아야 한다.
+그러나 실험에서는 산란 후 X선의 파장이 **길어졌다**.
+이 파장 이동은 광자와 전자의 **탄성 충돌**로 완벽하게 설명된다.
+
+상대론적 에너지-운동량 관계 $E = pc$로부터 광자의 운동량을 구할 수 있다.
+
+<LawBox title="광자의 운동량과 콤프턴 이동">
+
+광자의 운동량:
+
+<DisplayMath formula="p = \frac{E}{c} = \frac{hf}{c} = \frac{h}{\lambda}" />
+
+산란각 $\theta$로 산란된 X선의 파장 이동(콤프턴 이동):
+
+<DisplayMath formula="\Delta\lambda = \lambda' - \lambda = \frac{h}{m_e c}(1 - \cos\theta)" />
+
+- $\lambda'$: 산란 후 파장, $\lambda$: 입사 파장, $m_e = 9.11\times10^{-31}\,\mathrm{kg}$: 전자의 질량
+- 콤프턴 파장: $\lambda_C = h/m_e c = 2.43\times10^{-12}\,\mathrm{m}$
+- $\Delta\lambda$는 입사 파장과 무관하며 산란각 $\theta$에만 의존한다.
+
+</LawBox>
+
+콤프턴 산란은 광자가 단순한 파동이 아니라
+실제 운동량을 가진 **입자**처럼 행동함을 결정적으로 보여준다.
+이로써 빛의 입자성은 에너지($E = hf$)와 운동량($p = h/\lambda$) 두 측면 모두에서 확립되었다.
+
+<ExBox num="7.02" title="콤프턴 이동 계산">
+
+파장 $\lambda = 0.0700\,\mathrm{nm}$인 X선을 자유 전자에 쏘았다.
+산란각 $\theta = 90°$일 때, 산란된 X선의 파장을 구하라.
+
+<Solution>
+
+콤프턴 이동을 계산한다.
+
+<DisplayMath formula="\Delta\lambda = \frac{h}{m_e c}(1-\cos 90°) = \frac{h}{m_e c}(1-0) = \frac{6.626\times10^{-34}}{(9.11\times10^{-31})(3.00\times10^8)} = 2.43\times10^{-12}\,\mathrm{m}" />
+
+산란 후 파장을 구한다.
+
+<DisplayMath formula="\lambda' = \lambda + \Delta\lambda = 0.0700\,\mathrm{nm} + 0.00243\,\mathrm{nm}" />
+
+<Result>
+<DisplayMath formula="\lambda' = 0.0724\,\mathrm{nm}" />
+</Result>
+
+</Solution>
+
+</ExBox>

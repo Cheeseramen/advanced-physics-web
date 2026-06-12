@@ -1,0 +1,21 @@
+# 가우스 법칙의 미분형
+
+전하가 연속 분포할 때 $Q_{\mathrm{enc}} = \displaystyle\int_V \rho\,dV$이므로
+
+$$\oint_{\partial V}\mathbf{E}\cdot d\mathbf{A} = \frac{1}{\varepsilon_0}\int_V \rho\,dV$$
+
+**발산 정리(Divergence Theorem)**: $\displaystyle\oint_{\partial V}\mathbf{E}\cdot d\mathbf{A} = \int_V(\nabla\cdot\mathbf{E})\,dV$를 대입하면
+
+$$\int_V(\nabla\cdot\mathbf{E})\,dV = \frac{1}{\varepsilon_0}\int_V \rho\,dV$$
+
+임의의 부피 $V$에 대해 성립하므로
+
+<LawBox title="가우스 법칙 — 미분형">
+
+<DisplayMath formula="\nabla\cdot\mathbf{E} = \frac{\rho}{\varepsilon_0}" />
+
+- $\nabla\cdot\mathbf{E}>0$: 전기장 발산 (양전하 근방)
+- $\nabla\cdot\mathbf{E}<0$: 전기장 수렴 (음전하 근방)
+- $\rho$가 전기장의 근원
+
+</LawBox>

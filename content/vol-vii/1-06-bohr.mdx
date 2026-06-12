@@ -1,0 +1,53 @@
+# 보어 원자 모형 (Bohr Model of the Atom)
+
+수소 원자는 연속 스펙트럼이 아닌 특정 파장의 빛만 방출한다.
+고전 전자기학에 따르면 궤도 운동하는 전자는 에너지를 계속 방출하여
+핵으로 나선 낙하해야 하지만, 실제 원자는 안정하게 존재한다.
+
+보어(Bohr, 1913)는 고전역학에 양자 조건을 결합하여 이를 설명했다.
+
+<LawBox title="보어의 양자 조건">
+
+전자의 궤도 반지름 $r_n$과 에너지 $E_n$은 양자수 $n = 1, 2, 3, \ldots$에 의해 결정된다.
+
+<DisplayMath formula="m_e v r_n = n\hbar \quad (n = 1,2,3,\ldots)" />
+
+수소 원자의 에너지 준위:
+
+<DisplayMath formula="E_n = -\dfrac{13.6\,\mathrm{eV}}{n^2}" />
+
+- $n = 1$: 바닥 상태(ground state), $E_1 = -13.6\,\mathrm{eV}$
+- 전자가 $n_i \to n_f$ ($n_i > n_f$)로 전이할 때 방출하는 광자의 에너지: $hf = 13.6\!\left(\dfrac{1}{n_f^2} - \dfrac{1}{n_i^2}\right)\!\mathrm{eV}$
+- 수소의 선 스펙트럼은 이 이산적인 에너지 전이로 설명된다.
+
+</LawBox>
+
+보어 모형의 양자 조건 $mvr = n\hbar$는 드브로이 물질파로 자연스럽게 해석된다.
+궤도 둘레 $2\pi r$이 드브로이 파장 $\lambda = h/mv$의 정수배일 때 정상파가 형성된다.
+
+<DisplayMath formula="2\pi r_n = n\lambda = \frac{nh}{mv} \quad\Longrightarrow\quad mvr_n = \frac{nh}{2\pi} = n\hbar" />
+
+보어의 양자 조건은 실은 **궤도에서 전자 물질파의 정상파 조건**이었다.
+
+<ExBox num="7.04" title="수소 원자 에너지 전이">
+
+수소 원자에서 전자가 $n=3$ 상태에서 $n=1$ 상태로 전이할 때
+방출되는 광자의 에너지와 파장을 구하라.
+
+<Solution>
+
+방출되는 광자의 에너지를 구한다.
+
+<DisplayMath formula="hf = 13.6\!\left(\frac{1}{1^2} - \frac{1}{3^2}\right) = 13.6\!\left(1 - \frac{1}{9}\right) = 13.6 \times \frac{8}{9} = 12.1\,\mathrm{eV}" />
+
+광자의 파장을 구한다.
+
+<DisplayMath formula="\lambda = \frac{hc}{E} = \frac{(6.626\times10^{-34})(3.00\times10^8)}{12.1\times1.60\times10^{-19}} = 1.03\times10^{-7}\,\mathrm{m}" />
+
+<Result>
+<DisplayMath formula="\lambda = 103\,\mathrm{nm} \quad \text{(자외선 영역, 라이먼 계열)}" />
+</Result>
+
+</Solution>
+
+</ExBox>

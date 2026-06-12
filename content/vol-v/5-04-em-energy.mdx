@@ -1,0 +1,35 @@
+# 전자기파의 에너지와 세기
+
+전자기파가 운반하는 에너지의 흐름은 <strong>포인팅 벡터(Poynting vector)</strong>로 표현한다.
+
+<LawBox title="포인팅 벡터와 전자기파 세기">
+
+<DisplayMath formula="\mathbf{S} = \frac{1}{\mu_0}\mathbf{E}\times\mathbf{B} \qquad \bigl[\mathrm{W/m^2}\bigr]" />
+
+평면파의 시간 평균 세기:
+
+<DisplayMath formula="I = \langle S\rangle = \frac{E_0 B_0}{2\mu_0} = \frac{\varepsilon_0 c E_0^2}{2} = \frac{c B_0^2}{2\mu_0}" />
+
+- $\mathbf{S}$: 단위 면적을 단위 시간에 통과하는 에너지 (= 에너지 플럭스)
+- $\mathbf{S}$의 방향 = 전자기파의 진행 방향 ($\mathbf{E}\times\mathbf{B}$)
+
+</LawBox>
+
+<ExBox num="5.16" title="태양광의 전기장·자기장 진폭">
+
+지구 표면에서 태양 복사의 평균 세기는 $I=1.36\times10^3\,\mathrm{W/m^2}$이다.
+이에 해당하는 전기장 진폭 $E_0$와 자기장 진폭 $B_0$를 구하라.
+
+<Solution>
+
+세기 공식에서 $E_0$를 구한다:
+
+<DisplayMath formula="I = \frac{\varepsilon_0 c E_0^2}{2} \;\Rightarrow\; E_0 = \sqrt{\frac{2I}{\varepsilon_0 c}} = \sqrt{\frac{2\times1360}{8.85\times10^{-12}\times3.00\times10^8}} = \sqrt{\frac{2720}{2.655\times10^{-3}}}" />
+
+<Result formula="E_0 \approx 1.01\times10^3\,\mathrm{V/m}" />
+
+<DisplayMath formula="B_0 = \frac{E_0}{c} = \frac{1.01\times10^3}{3.00\times10^8} \approx 3.37\times10^{-6}\,\mathrm{T}" />
+
+</Solution>
+
+</ExBox>

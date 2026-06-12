@@ -1,0 +1,35 @@
+# 교류 회로와 리액턴스 (AC Reactance)
+
+교류 전원 $v(t) = V_0\sin\omega t$가 연결된 회로에서,
+인덕터와 축전기는 주파수에 따라 전류 흐름을 방해하는 정도가 달라진다.
+
+<LawBox title="리액턴스 (Reactance)">
+
+- 유도 리액턴스: $X_L = \omega L$ — 고주파일수록 인덕터가 전류를 더 방해
+- 용량 리액턴스: $X_C = \dfrac{1}{\omega C}$ — 고주파일수록 축전기가 전류를 덜 방해
+
+단위는 $\Omega$이며, 저항과 달리 에너지를 소산하지 않는다.
+
+</LawBox>
+
+## 위상 관계
+
+| **소자** | **위상 관계** | **주파수 의존성** |
+|:---:|:---:|:---:|
+| 저항 $R$ | 전압·전류 동위상 | 없음 |
+| 인덕터 $L$ | 전압이 전류보다 $\pi/2$ 앞섬 | $\omega\uparrow\;\Rightarrow\;X_L\uparrow$ |
+| 축전기 $C$ | 전류가 전압보다 $\pi/2$ 앞섬 | $\omega\uparrow\;\Rightarrow\;X_C\downarrow$ |
+
+## 임피던스와 공명
+
+RLC 직렬 회로에서 각 소자의 전압 진폭을 벡터적으로 합산하면 전체 저항에 해당하는
+**임피던스** $Z$를 얻는다.
+
+<LawBox title="임피던스 (Impedance)와 공명 조건">
+
+<DisplayMath formula="Z = \sqrt{R^2 + (X_L - X_C)^2} = \sqrt{R^2 + \!\left(\omega L - \frac{1}{\omega C}\right)^{\!2}} \qquad I_0 = \frac{V_0}{Z}" />
+
+- 공명 조건: $X_L = X_C$ → $Z = R$ (최솟값), $I_0$ 최대
+- 공명 각진동수: $\omega_0 = \dfrac{1}{\sqrt{LC}}$, $f_0 = \dfrac{1}{2\pi\sqrt{LC}}$
+
+</LawBox>

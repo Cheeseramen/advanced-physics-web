@@ -1,0 +1,59 @@
+# 전자기파 (Electromagnetic Waves)
+
+<LawBox title="전자기파">
+
+- $\mathbf{E}$와 $\mathbf{B}$는 서로 수직이고, 진행 방향에도 수직 (횡파)
+- $\mathbf{E}\times\mathbf{B}$: 진행 방향
+- 진공에서: $\dfrac{E}{B} = c$, $u_E = u_B$ (전기장과 자기장의 에너지 밀도가 동일)
+
+</LawBox>
+
+진공에서 맥스웰 방정식으로부터 파동 방정식을 유도할 수 있다.
+
+<LawBox title="파동 방정식 유도: 맥스웰 방정식 ⇒ 전자기파">
+
+진공($\rho=0,\;\mathbf{J}=\mathbf{0}$)에서 방정식 (Ⅲ)과 (Ⅳ)를 조합한다.
+
+**Step 1** 패러데이 법칙 (Ⅲ)의 양변에 회전($\nabla\times$)을 취한다.
+
+<DisplayMath formula="\nabla\times(\nabla\times\mathbf{E}) = -\frac{\partial}{\partial t}\!\left(\nabla\times\mathbf{B}\right)" />
+
+**Step 2** 벡터 항등식을 적용한다. 진공에서 (Ⅰ)에 의해 $\nabla\cdot\mathbf{E}=0$이므로
+
+<DisplayMath formula="\nabla\times(\nabla\times\mathbf{E}) = \nabla(\nabla\cdot\mathbf{E}) - \nabla^2\mathbf{E} = -\nabla^2\mathbf{E}" />
+
+**Step 3** 우변에 암페어-맥스웰 법칙 (Ⅳ)를 대입한다. ($\mathbf{J}=\mathbf{0}$이면 $\nabla\times\mathbf{B}=\mu_0\varepsilon_0\,\partial\mathbf{E}/\partial t$)
+
+<DisplayMath formula="-\nabla^2\mathbf{E} = -\mu_0\varepsilon_0\frac{\partial^2\mathbf{E}}{\partial t^2}" />
+
+정리하면 $\mathbf{E}$와 $\mathbf{B}$ 각각에 대한 파동 방정식:
+
+<DisplayMath formula="\nabla^2\mathbf{E} = \mu_0\varepsilon_0\frac{\partial^2\mathbf{E}}{\partial t^2}, \qquad \nabla^2\mathbf{B} = \mu_0\varepsilon_0\frac{\partial^2\mathbf{B}}{\partial t^2}" />
+
+일반 파동 방정식 $\nabla^2 f = \dfrac{1}{v^2}\dfrac{\partial^2 f}{\partial t^2}$와 비교하면 전자기파의 속도:
+
+<DisplayMath formula="v = \frac{1}{\sqrt{\mu_0\varepsilon_0}} = \frac{1}{\sqrt{4\pi\times10^{-7}\times8.85\times10^{-12}}} \approx 3.00\times10^8\,\mathrm{m/s} = c" />
+
+</LawBox>
+
+맥스웰은 이 결과로부터 **빛이 전자기파임**을 이론적으로 예측하였다.
+
+<ExBox num="5.15" title="전자기파에서 E와 B의 관계">
+
+진공 중 전자기파의 전기장 진폭이 $E_0 = 300\,\mathrm{V/m}$일 때, 자기장 진폭 $B_0$를 구하라.
+
+<Solution>
+
+진공에서 전자기파는 항상 $E/B = c$를 만족한다.
+
+<DisplayMath formula="B_0 = \frac{E_0}{c} = \frac{300}{3.00\times10^8}" />
+
+<Result formula="B_0 = 1.00\times10^{-6}\,\mathrm{T} = 1.00\,\mu\mathrm{T}" />
+
+두 장의 에너지 밀도는 같다:
+
+$$u_E = \frac{\varepsilon_0 E^2}{2} = \frac{B^2}{2\mu_0} = u_B$$
+
+</Solution>
+
+</ExBox>

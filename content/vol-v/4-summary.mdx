@@ -1,0 +1,56 @@
+# Ⅴ-4 중단원 핵심 정리
+
+<SummaryGrid>
+  <SummaryCard
+    title="KCL"
+    formula="\sum I_{\mathrm{in}}=\sum I_{\mathrm{out}}"
+    desc="전하 보존의 회로 표현"
+  />
+  <SummaryCard
+    title="KVL"
+    formula="\sum\Delta V=0"
+    desc="보존 전기장의 회로 표현"
+  />
+  <SummaryCard
+    title="RC 시간상수"
+    formula="\tau=RC,\quad q(t)=C\varepsilon(1-e^{-t/RC})"
+    desc="초기: 전류 최대 → 정상: 전류 0"
+  />
+  <SummaryCard
+    title="RL 시간상수"
+    formula="\tau=L/R,\quad I(t)=\frac{\varepsilon}{R}(1-e^{-Rt/L})"
+    desc="초기: 전류 0 → 정상: 전류 ε/R"
+  />
+  <SummaryCard
+    title="리액턴스"
+    formula="X_L=\omega L,\quad X_C=\frac{1}{\omega C}"
+    desc="에너지 소산 없이 전류를 방해"
+  />
+  <SummaryCard
+    title="임피던스"
+    formula="Z=\sqrt{R^2+(X_L-X_C)^2}"
+    desc="공명: X_L=X_C → Z=R, I₀ 최대"
+  />
+  <SummaryCard
+    title="공명 진동수"
+    formula="f_0=\frac{1}{2\pi\sqrt{LC}}"
+    desc="LC 회로 및 RLC 공명 조건"
+  />
+  <SummaryCard
+    title="RLC 감쇠"
+    note="R < 2√(L/C): 과소 감쇠(진동), R = 2√(L/C): 임계, R > 2√(L/C): 과 감쇠"
+    desc="감쇠 진동 방정식 d²q/dt² + (R/L)dq/dt + q/LC = 0"
+  />
+</SummaryGrid>
+
+<SummaryBox title="핵심 흐름">
+
+- KCL: $\sum I_{\mathrm{in}}=\sum I_{\mathrm{out}}$ (전하 보존)
+- KVL: $\sum\Delta V=0$ (에너지 보존)
+- RC 시간상수: $\tau=RC$, RL 시간상수: $\tau=L/R$
+- 유도 리액턴스: $X_L=\omega L$, 용량 리액턴스: $X_C=1/(\omega C)$
+- 임피던스: $Z=\sqrt{R^2+(X_L-X_C)^2}$, $I_0=V_0/Z$
+- 공명 조건: $X_L=X_C$ → $f_0=\dfrac{1}{2\pi\sqrt{LC}}$, $Z=R$
+- RLC 과소 감쇠: $R<2\sqrt{L/C}$ → 진동하며 감쇠
+
+</SummaryBox>

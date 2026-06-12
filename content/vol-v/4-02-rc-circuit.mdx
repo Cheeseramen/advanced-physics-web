@@ -1,0 +1,16 @@
+# RC 회로
+
+축전기와 저항이 직렬로 연결된 회로이다. KVL을 적용하면
+
+$$\varepsilon - IR - \frac{q}{C} = 0$$
+
+$I = dq/dt$를 대입하면 미분방정식을 얻는다.
+
+## 충전 과정의 해
+
+$$q(t) = C\varepsilon\!\left(1 - e^{-t/RC}\right), \qquad I(t) = \frac{\varepsilon}{R}\,e^{-t/RC}$$
+
+시간상수 $\tau = RC$가 클수록 충전·방전이 느리게 일어난다.
+
+- $t=0$: 축전기 미충전 → 전류 최대
+- $t\to\infty$: 축전기 완전 충전 → 전류 0

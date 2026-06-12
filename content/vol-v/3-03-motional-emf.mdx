@@ -1,0 +1,42 @@
+# 운동 기전력 (Motional EMF)
+
+균일한 자기장 $\mathbf{B}$ 속에서 도선이 속도 $\mathbf{v}$로 움직이면,
+도선 내 전하에 로런츠 힘 $\mathbf{F}=q\mathbf{v}\times\mathbf{B}$이 작용하여 전하가 분리되고 기전력이 발생한다.
+
+$$\text{로런츠 힘} \;\longrightarrow\; \text{전하 분리} \;\longrightarrow\; \text{기전력} \;\longrightarrow\; \text{전류}$$
+
+<LawBox title="운동 기전력">
+
+<DisplayMath formula="\varepsilon = \int_a^b (\mathbf{v}\times\mathbf{B})\cdot d\mathbf{l}" />
+
+$\mathbf{v}\perp\mathbf{B}$이고 도선 길이가 $L$인 경우:
+
+<DisplayMath formula="\varepsilon = BLv" />
+
+이는 패러데이 법칙과 동일한 결과이다: $\varepsilon = -d\Phi_B/dt = -B\,L\,(-v) = BLv$
+
+</LawBox>
+
+<ExBox num="5.11" title="레일 위의 움직이는 도선">
+
+간격이 $L$인 두 평행 레일 위로 저항 $R$의 도선이 속도 $v$로 미끄러진다. 레일 평면에 수직으로 자기장 $B$가 들어갈 때, 유도 기전력과 회로 전류를 구하라.
+
+<Solution>
+
+도선 내 전하에 작용하는 로런츠 힘: $F = qvB$ ($\mathbf{v}\perp\mathbf{B}$, $\mathbf{B}\perp L$)
+
+전하가 분리되어 도선에 기전력이 생긴다:
+
+$$\varepsilon = BLv$$
+
+회로가 닫혀 있으면 전류가 흐른다:
+
+<Result formula="I = \frac{BLv}{R}" />
+
+도선에는 유도 전류에 의한 제동력이 작용한다:
+
+$$F_{\rm drag} = BIL = \frac{B^2L^2v}{R}$$
+
+</Solution>
+
+</ExBox>

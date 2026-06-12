@@ -1,0 +1,104 @@
+# 전기선속과 가우스 법칙 (Gauss' Law)
+
+전기장이 어떤 면을 얼마나 통과하는지를 <strong>전기선속(electric flux)</strong>이라 한다.
+
+$$\Phi_E = \int_S \mathbf{E}\cdot d\mathbf{A}, \qquad d\mathbf{A} = \hat{\mathbf{n}}\,dA$$
+
+$\hat{\mathbf{n}}$: 면에 수직인 단위벡터. $\mathbf{E}$가 면에 수직일수록 선속이 크고, 면에 나란할수록 선속은 0이다.
+
+<LawBox title="가우스 법칙">
+
+폐곡면(가우스 곡면)을 통과해 나가는 전기 선속은 내부 전하량에 의해 결정된다.
+
+<DisplayMath formula="\oint_S \mathbf{E}\cdot d\mathbf{A} = \frac{Q_{\mathrm{enc}}}{\varepsilon_0}" />
+
+($Q_{\mathrm{enc}}$: 폐곡면 내부의 전체 전하량, $\varepsilon_0 \approx 8.85\times10^{-12}\ \mathrm{C^2/(N{\cdot}m^2)}$: 진공 유전율)
+
+</LawBox>
+
+**증명 (점전하):** 점전하 $q$로부터 거리 $r$인 곳의 전기장은 $E = \dfrac{1}{4\pi\varepsilon_0}\dfrac{q}{r^2}$이다.
+점전하를 중심으로 반지름이 $r$인 구면을 가우스 곡면으로 설정하면
+
+$$\oint_S \mathbf{E}\cdot d\mathbf{A} = E\cdot 4\pi r^2 = \frac{1}{4\pi\varepsilon_0}\frac{q}{r^2}\cdot 4\pi r^2 = \frac{q}{\varepsilon_0}$$
+
+<ExBox num="5.01" title="균일하게 대전된 무한 직선 주위의 전기장">
+
+선전하 밀도가 $\lambda$인 무한 직선으로부터 거리 $r$인 지점의 전기장을 구하라.
+
+<Solution>
+
+직선을 축으로 하는 반지름 $r$, 길이 $l$인 원통을 가우스 곡면으로 설정한다.
+
+- 원통 **옆면**: $\mathbf{E}\parallel d\mathbf{A}$, 넓이 $= 2\pi r l$
+- 원통 **위·아랫면**: $\mathbf{E}\perp d\mathbf{A}$ → 기여 없음
+
+<DisplayMath formula="\oint \mathbf{E}\cdot d\mathbf{A} = E\cdot 2\pi r l = \frac{\lambda l}{\varepsilon_0}" />
+
+<Result formula="E = \dfrac{\lambda}{2\pi\varepsilon_0 r}" />
+
+</Solution>
+
+</ExBox>
+
+<ExBox num="5.02" title="균일하게 대전된 무한 평면 주위의 전기장">
+
+면전하 밀도가 $\sigma$인 무한 평면 주위의 전기장을 구하라.
+
+<Solution>
+
+평면을 관통하는 단면적 $A$인 원통을 가우스 곡면으로 설정한다.
+
+- 원통 **양 뚜껑**: 각각 $EA$ 기여, 합 $= 2EA$
+- 원통 **옆면**: 기여 없음
+
+<DisplayMath formula="2EA = \frac{\sigma A}{\varepsilon_0}" />
+
+<Result formula="E = \dfrac{\sigma}{2\varepsilon_0}" />
+
+</Solution>
+
+</ExBox>
+
+<ExBox num="5.03" title="균일하게 대전된 도체 구 내외의 전기장">
+
+전하량 $Q$, 반지름 $R$인 도체 구의 전기장을 구하라.
+
+<Solution>
+
+**외부 ($r>R$):**
+
+<DisplayMath formula="E\cdot 4\pi r^2 = \frac{Q}{\varepsilon_0}" />
+
+<Result formula="E = \dfrac{1}{4\pi\varepsilon_0}\dfrac{Q}{r^2}" />
+
+**내부 ($r<R$):** 도체의 전하는 표면에만 분포한다. $Q_{\mathrm{enc}}=0$
+
+<Result formula="E = 0" />
+
+</Solution>
+
+</ExBox>
+
+<ExBox num="5.04" title="균일하게 대전된 부도체 구 내외의 전기장">
+
+전하량 $Q$, 반지름 $R$인 부도체 구에 전하가 균일하게 분포할 때 전기장을 구하라.
+
+<Solution>
+
+부피전하 밀도: $\rho = \dfrac{Q}{\frac{4}{3}\pi R^3}$
+
+**외부 ($r>R$):** 도체 구의 경우와 동일. $E = \dfrac{1}{4\pi\varepsilon_0}\dfrac{Q}{r^2}$
+
+**내부 ($r<R$):** 반지름 $r$ 내부의 전하량:
+
+<DisplayMath formula="Q_{\mathrm{enc}} = \rho\cdot\tfrac{4}{3}\pi r^3 = Q\,\frac{r^3}{R^3}" />
+
+<DisplayMath formula="E\cdot 4\pi r^2 = \frac{Q_{\mathrm{enc}}}{\varepsilon_0} = \frac{Q}{\varepsilon_0}\frac{r^3}{R^3}" />
+
+<Result formula="E = \dfrac{1}{4\pi\varepsilon_0}\dfrac{Q}{R^3}\,r \quad(r<R)" />
+
+내부에서 $E$는 $r$에 비례(선형), 외부에서는 $1/r^2$에 비례하여 감소한다.
+
+</Solution>
+
+</ExBox>

@@ -1,0 +1,67 @@
+# 암페어 법칙 (Ampère's Law)
+
+대칭성이 높은 전류 분포에서는 비오-사바르 법칙 대신 암페어 법칙을 이용한다.
+
+<LawBox title="암페어 법칙">
+
+닫힌 경로(암페어 고리)를 따른 $\mathbf{B}$의 선적분은 그 경로가 감싸는 전체 전류로 결정된다.
+
+<DisplayMath formula="\oint_C \mathbf{B}\cdot d\mathbf{l} = \mu_0 I_{\mathrm{enc}}" />
+
+- $I_{\mathrm{enc}}$: 암페어 고리가 감싸는 알짜 전류
+- 전류는 자기장을 **휘감기게(curl)** 만든다
+
+</LawBox>
+
+**가우스 법칙과의 비교:**
+
+| | **가우스 법칙** | **암페어 법칙** |
+|:---:|:---:|:---:|
+| 적분 | $\displaystyle\oint_S\mathbf{E}\cdot d\mathbf{A}=\dfrac{Q_{\mathrm{enc}}}{\varepsilon_0}$ | $\displaystyle\oint_C\mathbf{B}\cdot d\mathbf{l}=\mu_0 I_{\mathrm{enc}}$ |
+| 근원 | 전하 (발산 구조) | 전류 (회전 구조) |
+
+<ExBox num="5.07" title="무한 직선 전류 — 암페어 법칙으로 재확인">
+
+선전류 $I$가 흐르는 무한 직선 도선으로부터 거리 $r$인 지점의 자기장을 암페어 법칙으로 구하라.
+
+<Solution>
+
+도선을 중심으로 반지름 $r$인 원을 암페어 고리로 설정한다.
+
+대칭성에 의해 $B$는 원 위 어디서나 같고, $\mathbf{B}\parallel d\mathbf{l}$이므로
+
+<DisplayMath formula="\oint \mathbf{B}\cdot d\mathbf{l} = B\cdot 2\pi r = \mu_0 I" />
+
+<Result formula="B = \dfrac{\mu_0 I}{2\pi r}" />
+
+비오-사바르 법칙의 결과(예제 5.05)와 일치한다.
+
+</Solution>
+
+</ExBox>
+
+<ExBox num="5.08" title="원통형 도선 내외부의 자기장">
+
+반지름 $R$인 원통형 도선에 전류 $I$가 단면에 균일하게 분포하여 흐른다. 도선 **외부**($r>R$)와 **내부**($r<R$)의 자기장을 암페어 법칙으로 구하라.
+
+<Solution>
+
+전류밀도: $J = \dfrac{I}{\pi R^2}$
+
+**외부 ($r>R$):** 고리 내 전체 전류 $I$ 포함.
+
+<DisplayMath formula="B\cdot 2\pi r = \mu_0 I" />
+
+<Result formula="B = \dfrac{\mu_0 I}{2\pi r}" />
+
+**내부 ($r<R$):** 반지름 $r$ 내 포함 전류:
+
+<DisplayMath formula="I_{\mathrm{enc}} = J\cdot\pi r^2 = I\,\frac{r^2}{R^2} \quad\Rightarrow\quad B\cdot 2\pi r = \mu_0 I\,\frac{r^2}{R^2}" />
+
+<Result formula="B = \dfrac{\mu_0 I}{2\pi R^2}\,r \quad (r<R)" />
+
+$B_{\max}=\dfrac{\mu_0 I}{2\pi R}$ (표면 $r=R$에서 최대). 부도체 구의 전기장(예제 5.04)과 완전히 같은 구조이다.
+
+</Solution>
+
+</ExBox>

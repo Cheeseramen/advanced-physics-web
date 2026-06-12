@@ -1,0 +1,84 @@
+# 상대론적 역학
+
+## (1) 상대론적 운동량
+
+고전 역학에서 운동량 $m_0 v$는 갈릴레이 변환 아래에서 보존된다. 그런데 로런츠 변환이 올바른 시공간 변환이라면, 두 관성계에서 $m_0 v$의 합이 다르게 계산되어 운동량 보존이 깨진다.
+
+이 문제를 해결하려면 속도를 좌표 시간 $t$ 대신 **고유 시간** $\tau$에 대해 미분해야 한다.
+
+<LawBox title="상대론적 운동량">
+
+<DisplayMath formula="p = m_0\frac{dx}{d\tau} = m_0\frac{dx}{dt}\cdot\frac{dt}{d\tau} = \gamma m_0 v" />
+
+</LawBox>
+
+$v \ll c$이면 $\gamma \to 1$이 되어 고전 운동량 $m_0 v$로 환원된다. $v \to c$이면 $p \to \infty$.
+
+## (2) 상대론적 에너지
+
+정지 상태에서 출발한 입자를 속도 $v$까지 가속하는 데 필요한 일을 계산하면, $W = \gamma m_0 c^2 - m_0 c^2$이다.
+
+여기에 $v = 0$일 때의 에너지 $E_0 = m_0 c^2$ (**정지 에너지**)를 더하면 전체 에너지가 된다.
+
+<LawBox title="상대론적 에너지">
+
+<DisplayMath formula="E = \gamma m_0 c^2 \qquad\text{(전체 에너지)}, \qquad E_0 = m_0 c^2 \;\text{(정지 에너지)}" />
+
+<DisplayMath formula="E^2 = (pc)^2 + (m_0 c^2)^2 \qquad\text{(에너지–운동량 불변량)}" />
+
+</LawBox>
+
+$v \ll c$이면 운동 에너지 $K = E - E_0 \approx \tfrac{1}{2}m_0 v^2$ (뉴턴 역학과 일치).
+
+## (3) 상대론적 질량
+
+광자(빛의 입자)는 항상 속도 $c$로 운동한다. 만약 광자의 정지 질량이 $m_0 > 0$이라면, $E = \gamma m_0 c^2$에서 $v = c$일 때 $\gamma \to \infty$가 되어 에너지가 무한대가 된다. 그러나 광자는 유한한 에너지를 가지므로 **정지 질량은 반드시 0**이어야 한다.
+
+$m_0 = 0$을 에너지–운동량 불변량에 대입하면
+
+$$E = pc \quad\Longrightarrow\quad p = \frac{E}{c}$$
+
+광전 효과에서 광자의 에너지는 $E = h\nu$이므로
+
+$$p = \frac{h\nu}{c} = \frac{h}{\lambda}$$
+
+이것이 드브로이 물질파($p = h/\lambda$)에서 광자 운동량의 이론적 근거다.
+특수 상대론 없이는 빛의 운동량 $p = h/\lambda$를 유도할 수 없다.
+
+<ExBox num="6.02" title="빛의 속도에 가까워질수록 가속이 어려운 이유">
+
+질량 $m_0$인 입자가 정지 상태에서 출발하여 일정한 힘 $F$를 계속 받는다.
+(가) 상대론적 운동 방정식 $F = dp/dt$를 이용하여 시간 $t$에 따른 속도 $v(t)$를 구하라.
+(나) $Ft = 10\,m_0 c$일 때 속도를 구하고, 고전 역학 예측($v_\text{고전} = Ft/m_0$)과 비교하라.
+(다) $t \to \infty$일 때 $v$의 극한을 구하라.
+
+<Solution>
+
+**(가)** $F = dp/dt$이고 $t=0$에서 정지했으므로 $p = Ft$.
+
+$p = \gamma m_0 v$에서 정리하면
+
+<DisplayMath formula="v = \frac{pc}{\sqrt{m_0^2 c^2 + p^2}}" />
+
+$p = Ft$를 대입하면
+
+<DisplayMath formula="v(t) = \frac{Ft\,c}{\sqrt{m_0^2 c^2 + (Ft)^2}} = \frac{c}{\sqrt{1+\!\left(\dfrac{m_0 c}{Ft}\right)^{\!2}}}" />
+
+**(나)** $Ft = 10\,m_0 c$ 대입:
+
+<DisplayMath formula="v = \frac{c}{\sqrt{1+(1/10)^2}} = \frac{c}{\sqrt{1.01}} \approx 0.995\,c" />
+
+고전 역학 예측: $v_\text{고전} = Ft/m_0 = 10c$ (빛의 속도의 10배 — 물리적으로 불가).
+상대론적 결과는 $c$를 넘지 않는다.
+
+**(다)** $t \to \infty$이면 $(m_0 c/Ft) \to 0$이므로
+
+<DisplayMath formula="\lim_{t\to\infty} v(t) = c" />
+
+힘을 무한정 가해도 속도는 $c$에 수렴할 뿐, 절대 도달하지 못한다.
+
+<Result formula="v(t) = \dfrac{c}{\sqrt{1+(m_0c/Ft)^2}} < c \;\;(\text{항상}) \quad\longrightarrow\quad v \to c \;\;(t \to \infty)" />
+
+</Solution>
+
+</ExBox>

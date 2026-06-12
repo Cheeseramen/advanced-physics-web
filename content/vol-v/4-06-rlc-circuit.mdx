@@ -1,0 +1,48 @@
+# RLC 회로
+
+저항, 인덕터, 축전기가 직렬로 연결된 회로이다. KVL을 적용하면
+
+$$L\frac{d^2q}{dt^2} + R\frac{dq}{dt} + \frac{1}{C}q = 0$$
+
+이는 감쇠 진동 방정식과 같은 꼴이다.
+
+<LawBox title="RLC 직렬 회로">
+
+- 공명: $X_L = X_C$ → $f_0 = \dfrac{1}{2\pi\sqrt{LC}}$, $Z=R$ (최솟값), $I_0$ 최대
+- 과소 감쇠 (underdamped): $R < 2\sqrt{L/C}$ — 진동하며 감쇠
+- 임계 감쇠: $R = 2\sqrt{L/C}$
+- 과 감쇠 (overdamped): $R > 2\sqrt{L/C}$ — 진동 없이 감쇠
+
+</LawBox>
+
+## 회로 소자 종합 비교
+
+| **소자** | **기호** | **전압–전류 관계** | **교류 리액턴스** | **에너지** |
+|:---:|:---:|:---:|:---:|:---:|
+| 저항 | $R$ | $V = IR$ | $R$ (위상차 없음) | 열 소산 |
+| 축전기 | $C$ | $Q = CV$ | $X_C = \dfrac{1}{\omega C}$ | $U_E = \dfrac{Q^2}{2C}$ |
+| 인덕터 | $L$ | $\varepsilon = -L\,\dfrac{dI}{dt}$ | $X_L = \omega L$ | $U_B = \dfrac{LI^2}{2}$ |
+
+<ExBox num="5.13" title="RLC 직렬 회로의 공명 진동수와 감쇠 조건">
+
+$L=0.10\,\mathrm{H}$, $C=10\,\mu\mathrm{F}$, $R=100\,\Omega$인 RLC 직렬 회로에 대해 (1) 공명 진동수, (2) 감쇠 유형을 결정하라.
+
+<Solution>
+
+**(1) 공명 진동수:**
+
+<DisplayMath formula="f_0 = \frac{1}{2\pi\sqrt{LC}} = \frac{1}{2\pi\sqrt{0.10\times10\times10^{-6}}} = \frac{1}{2\pi\times10^{-3}}" />
+
+<Result formula="f_0 \approx 159\,\mathrm{Hz}" />
+
+**(2) 감쇠 조건 판별:**
+
+<DisplayMath formula="2\sqrt{\frac{L}{C}} = 2\sqrt{\frac{0.10}{10\times10^{-6}}} = 2\sqrt{10^{4}} = 200\,\Omega" />
+
+$R = 100\,\Omega < 200\,\Omega$이므로
+
+<Result formula="\text{과소 감쇠 (underdamped) — 진동하며 감쇠한다.}" />
+
+</Solution>
+
+</ExBox>

@@ -1,0 +1,42 @@
+# 변위 전류 (Displacement Current)
+
+암페어 법칙 $\oint\mathbf{B}\cdot d\mathbf{l}=\mu_0 I_{\rm enc}$은 **정상 전류**에만 성립한다.
+축전기를 충전할 때, 극판 사이의 전기장은 시간에 따라 변하지만 실제 전류는 흐르지 않는다.
+맥스웰은 변화하는 전기선속이 자기장을 만든다는 사실을 발견했다.
+
+<LawBox title="변위 전류와 일반화된 암페어 법칙">
+
+변위 전류:
+
+<DisplayMath formula="I_D = \varepsilon_0\frac{d\Phi_E}{dt}" />
+
+일반화된 암페어 법칙:
+
+<DisplayMath formula="\oint_C \mathbf{B}\cdot d\mathbf{l} = \mu_0\!\left(I_{\rm enc} + I_D\right) = \mu_0 I_{\rm enc} + \mu_0\varepsilon_0\frac{d\Phi_E}{dt}" />
+
+- 실제 전류뿐 아니라 변화하는 전기장도 자기장을 만든다
+- $I_D$는 전류와 동일하게 암페어 법칙에 기여한다
+
+</LawBox>
+
+<ExBox num="5.14" title="축전기의 변위 전류">
+
+면적 $A$인 평행판 축전기에 전류 $I$로 충전 중이다. 극판 사이의 변위 전류를 구하고, 전도 전류 $I$와 비교하라.
+
+<Solution>
+
+극판 사이 전기장: $E = \dfrac{\sigma}{\varepsilon_0} = \dfrac{q}{\varepsilon_0 A}$
+
+전기선속: $\Phi_E = EA = \dfrac{q}{\varepsilon_0}$
+
+변위 전류:
+
+<DisplayMath formula="I_D = \varepsilon_0\frac{d\Phi_E}{dt} = \varepsilon_0\cdot\frac{1}{\varepsilon_0}\frac{dq}{dt} = \frac{dq}{dt}" />
+
+<Result formula="I_D = I" />
+
+변위 전류와 전도 전류는 크기가 같다. 회로 전체에서 전류의 연속성이 유지된다.
+
+</Solution>
+
+</ExBox>

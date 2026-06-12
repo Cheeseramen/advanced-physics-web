@@ -1,0 +1,23 @@
+# RL 회로
+
+인덕터와 저항이 직렬로 연결된 회로이다. KVL을 적용하면
+
+$$\varepsilon - IR - L\frac{dI}{dt} = 0$$
+
+## 전류 증가 과정의 해
+
+$$I(t) = \frac{\varepsilon}{R}\!\left(1 - e^{-Rt/L}\right)$$
+
+시간상수 $\tau = L/R$가 클수록 전류가 천천히 증가한다.
+
+- $t=0$: 인덕터가 전류 변화 억제 → 전류 0
+- $t\to\infty$: 전류 $\varepsilon/R$에 수렴
+
+## RC·RL 회로 비교
+
+| | **RC 회로** | **RL 회로** |
+|:---:|:---:|:---:|
+| 시간상수 | $\tau = RC$ | $\tau = L/R$ |
+| 초기 상태 ($t=0$) | 전류 최대, $q=0$ | 전류 0 |
+| 정상 상태 ($t\to\infty$) | 전류 0, $q=C\varepsilon$ | 전류 $\varepsilon/R$ |
+| 에너지 저장 소자 | 축전기 | 인덕터 |
