@@ -73,6 +73,7 @@ export const VOL_VII_CHAPTERS: Chapter[] = [
   { slug: '2-05-measurement',       title: '측정과 파동함수 붕괴' },
   { slug: '2-quiz',                 title: 'Ⅶ-2 매칭 퀴즈' },
   { slug: '2-summary',              title: 'Ⅶ-2 중단원 핵심 정리',           highlight: true },
+  { slug: '3-simulation',           title: '인터랙티브 시뮬레이션',            highlight: true },
 ]
 
 const VOLUME_CHAPTERS: Record<Volume, Chapter[]> = {
